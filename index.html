@@ -166,18 +166,42 @@
 
   /* COMMENTARY */
   .commentary {
-    display: none; margin-top: 12px; padding: 12px 14px;
-    background: rgba(42,92,138,0.06); border-left: 3px solid rgba(42,92,138,0.35);
-    border-radius: 0 4px 4px 0; font-size: 0.92rem; line-height: 1.7;
-    color: var(--ink-soft); font-style: normal;
+    display: none; margin-top: 10px;
+    border-left: 3px solid rgba(42,92,138,0.3);
+    border-radius: 0 4px 4px 0; font-style: normal;
   }
   .commentary.visible { display: block; }
-  .commentary-label {
-    font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase;
-    color: #2a5c8a; font-style: normal; margin-bottom: 6px; display: block; opacity: 0.8;
+  .cm-section {
+    padding: 11px 14px;
   }
-  .commentary-text { font-size: 0.93rem; line-height: 1.72; }
+  .cm-section + .cm-section {
+    border-top: 1px solid rgba(42,92,138,0.1);
+  }
+  .cm-section.tafsir-section {
+    background: rgba(42,92,138,0.05);
+  }
+  .cm-section.mynotes-section {
+    background: rgba(42,92,138,0.02);
+  }
+  .commentary-label {
+    font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: #2a5c8a; font-style: normal; margin-bottom: 6px; display: flex;
+    align-items: center; justify-content: space-between; opacity: 0.8;
+  }
+  .commentary-text { font-size: 0.92rem; line-height: 1.72; color: var(--ink-soft); }
   .commentary-loading { opacity: 0.45; font-style: italic; font-size: 0.88rem; }
+  /* My Notes textarea */
+  .note-textarea {
+    width: 100%; background: rgba(255,255,255,0.6);
+    border: 1px dashed rgba(42,92,138,0.35); border-radius: 4px;
+    padding: 7px 10px; font-family: 'Crimson Pro', serif;
+    font-size: 0.95rem; line-height: 1.7; color: var(--ink);
+    resize: none; overflow: hidden; outline: none; min-height: 60px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .note-textarea:focus { border-color: #2a5c8a; background: white; }
+  .note-textarea::placeholder { color: rgba(26,18,8,0.3); font-style: italic; }
+  .note-has-content { border-color: rgba(42,92,138,0.5) !important; }
   .commentary-toggle {
     display: none; margin-top: 8px; background: none; border: none; cursor: pointer;
     font-family: 'Crimson Pro', serif; font-size: 0.75rem; letter-spacing: 0.07em;
@@ -186,6 +210,12 @@
   }
   .commentary-toggle:hover { opacity: 1; }
   .notes-on .commentary-toggle { display: inline-block; }
+  /* show note indicator badge when saved note exists */
+  .has-note-badge {
+    display: inline-block; font-size: 0.58rem; letter-spacing: 0.07em; text-transform: uppercase;
+    color: #2a5c8a; border: 1px solid #2a5c8a; border-radius: 2px;
+    padding: 1px 4px; margin-left: 6px; vertical-align: middle; opacity: 0.7;
+  }
 
   /* TOOLTIP */
   #tip {
@@ -300,6 +330,7 @@
 // ── STORAGE KEYS ─────────────────────────────────────────
 const SK_TRANS = 'quran_trans_v2';
 const SK_NAMES = 'quran_names_v2';
+const SK_NOTES = 'quran_notes_v2';
 
 // ── STATE ────────────────────────────────────────────────
 let surahs = [];
@@ -309,23 +340,28 @@ let dictMode  = false;
 let notesMode = false;
 let pendingTrans = {};   // { "2:3": "text" }
 let pendingNames = {};   // { 2: "name" }
+let pendingNotes = {};   // { "2:3": "my note" }
 let savedTrans = {};
 let savedNames = {};
+let savedNotes = {};
 let allVerses  = [];
 let tafsirCache = {};    // { surahNum: [ {number, text} ] }
 
 // ── INIT ─────────────────────────────────────────────────
 function loadSaved() {
-  try { savedTrans = JSON.parse(localStorage.getItem(SK_TRANS) || '{}'); } catch { savedTrans = {}; }
-  try { savedNames = JSON.parse(localStorage.getItem(SK_NAMES) || '{}'); } catch { savedNames = {}; }
+  try { savedTrans  = JSON.parse(localStorage.getItem(SK_TRANS)  || '{}'); } catch { savedTrans  = {}; }
+  try { savedNames  = JSON.parse(localStorage.getItem(SK_NAMES)  || '{}'); } catch { savedNames  = {}; }
+  try { savedNotes  = JSON.parse(localStorage.getItem(SK_NOTES)  || '{}'); } catch { savedNotes  = {}; }
 }
 
 function saveAll() {
-  Object.assign(savedTrans, pendingTrans);
-  Object.assign(savedNames, pendingNames);
-  localStorage.setItem(SK_TRANS, JSON.stringify(savedTrans));
-  localStorage.setItem(SK_NAMES, JSON.stringify(savedNames));
-  pendingTrans = {}; pendingNames = {};
+  Object.assign(savedTrans,  pendingTrans);
+  Object.assign(savedNames,  pendingNames);
+  Object.assign(savedNotes,  pendingNotes);
+  localStorage.setItem(SK_TRANS,  JSON.stringify(savedTrans));
+  localStorage.setItem(SK_NAMES,  JSON.stringify(savedNames));
+  localStorage.setItem(SK_NOTES,  JSON.stringify(savedNotes));
+  pendingTrans = {}; pendingNames = {}; pendingNotes = {};
   updateSaveBar();
   reRenderSidebar();
   const f = document.getElementById('saved-flash');
@@ -334,7 +370,7 @@ function saveAll() {
 }
 
 function updateSaveBar() {
-  const has = Object.keys(pendingTrans).length + Object.keys(pendingNames).length > 0;
+  const has = Object.keys(pendingTrans).length + Object.keys(pendingNames).length + Object.keys(pendingNotes).length > 0;
   document.getElementById('save-bar').classList.toggle('visible', has);
 }
 
@@ -542,10 +578,23 @@ function renderVerses(verses, surahNum) {
     // commentary block
     if (notesMode) {
       const hasNote = tafsirText.length > 0;
-      html += `<button class="commentary-toggle" data-idx="${idx}">▸ Commentary</button>
+      const noteKey = v.key;
+      const myNote = pendingNotes[noteKey] !== undefined ? pendingNotes[noteKey] : (savedNotes[noteKey] || '');
+      const hasMyNote = myNote.length > 0;
+
+      html += `<button class="commentary-toggle" data-idx="${idx}">▸ Notes${hasMyNote ? ' <span class="has-note-badge">my note</span>' : ''}</button>
         <div class="commentary" id="cm-${idx}">
-          <span class="commentary-label">Maududi — Tafhim al-Qur'an</span>
-          <div class="commentary-text">${hasNote ? escHtml(tafsirText) : '<span class="commentary-loading">No note available for this verse.</span>'}</div>
+          <div class="cm-section tafsir-section">
+            <span class="commentary-label">Maududi — Tafhim al-Qur'an</span>
+            <div class="commentary-text">${hasNote ? escHtml(tafsirText) : '<span class="commentary-loading">No commentary available for this verse.</span>'}</div>
+          </div>
+          <div class="cm-section mynotes-section">
+            <span class="commentary-label">My Notes <span style="opacity:0.5;font-size:0.58rem;letter-spacing:0.05em;text-transform:none;font-style:italic">— saved locally</span></span>
+            <textarea class="note-textarea${hasMyNote ? ' note-has-content' : ''}"
+              data-notekey="${noteKey}"
+              placeholder="Write your own notes, reflections, or commentary for this verse…"
+              rows="2">${escHtml(myNote)}</textarea>
+          </div>
         </div>`;
     }
 
@@ -586,7 +635,28 @@ function renderVerses(verses, surahNum) {
         const idx = btn.dataset.idx;
         const cm = document.getElementById(`cm-${idx}`);
         const open = cm.classList.toggle('visible');
-        btn.textContent = (open ? '▾' : '▸') + ' Commentary';
+        // preserve the "my note" badge text when toggling label
+        const badge = btn.querySelector('.has-note-badge');
+        const badgeHtml = badge ? ' ' + badge.outerHTML : '';
+        btn.innerHTML = (open ? '▾' : '▸') + ' Notes' + badgeHtml;
+        if (open) {
+          // auto-resize the textarea when opened
+          const ta = cm.querySelector('.note-textarea');
+          if (ta) autoH(ta);
+        }
+      });
+    });
+
+    // Note textarea listeners
+    content.querySelectorAll('.note-textarea').forEach(ta => {
+      autoH(ta);
+      ta.addEventListener('input', () => {
+        autoH(ta);
+        const key = ta.dataset.notekey;
+        const val = ta.value;
+        pendingNotes[key] = val;
+        ta.classList.toggle('note-has-content', val.length > 0);
+        updateSaveBar();
       });
     });
   }
