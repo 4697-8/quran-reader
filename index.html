@@ -7,619 +7,432 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Amiri:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:wght@300;400;500&display=swap" rel="stylesheet" />
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --parchment: #f7f3eb;
-    --parchment-dark: #ede7d5;
-    --ink: #1a1208;
-    --ink-soft: #3d3020;
-    --gold: #b8860b;
-    --gold-light: #d4a843;
-    --gold-pale: #f0e4b8;
-    --rust: #8b3a1a;
-    --teal: #1a5c5a;
-    --border: rgba(184,134,11,0.25);
-    --shadow: rgba(26,18,8,0.12);
+    --parchment: #f7f3eb; --parchment-dark: #ede7d5;
+    --ink: #1a1208; --ink-soft: #3d3020;
+    --gold: #b8860b; --gold-light: #d4a843; --gold-pale: #f0e4b8;
+    --rust: #8b3a1a; --teal: #1a5c5a;
+    --border: rgba(184,134,11,0.25); --shadow: rgba(26,18,8,0.12);
   }
-
   html { scroll-behavior: smooth; }
-
   body {
     font-family: 'Crimson Pro', Georgia, serif;
-    background: var(--parchment);
-    color: var(--ink);
-    min-height: 100vh;
+    background: var(--parchment); color: var(--ink); min-height: 100vh;
     background-image:
       radial-gradient(ellipse at 20% 50%, rgba(184,134,11,0.04) 0%, transparent 60%),
       radial-gradient(ellipse at 80% 20%, rgba(26,92,90,0.04) 0%, transparent 50%);
   }
 
-  /* ─── SIDEBAR ─── */
+  /* SIDEBAR */
   #sidebar {
-    position: fixed; top: 0; left: 0; bottom: 0;
-    width: 270px;
-    background: var(--ink);
-    color: var(--parchment);
-    overflow-y: auto;
-    z-index: 100;
+    position: fixed; top: 0; left: 0; bottom: 0; width: 270px;
+    background: var(--ink); color: var(--parchment);
+    overflow-y: auto; z-index: 100;
     border-right: 1px solid rgba(184,134,11,0.3);
-    display: flex; flex-direction: column;
-    transition: transform 0.3s ease;
+    display: flex; flex-direction: column; transition: transform 0.3s ease;
   }
   #sidebar-header {
-    padding: 28px 20px 16px;
+    padding: 24px 20px 14px;
     border-bottom: 1px solid rgba(184,134,11,0.2);
     position: sticky; top: 0; background: var(--ink); z-index: 2;
   }
-  #sidebar-header h1 {
-    font-family: 'Amiri', serif;
-    font-size: 1.3rem;
-    font-weight: 400;
-    color: var(--gold-light);
-    letter-spacing: 0.04em;
-    line-height: 1.3;
-  }
-  #sidebar-header p {
-    font-size: 0.72rem;
-    color: rgba(247,243,235,0.45);
-    margin-top: 4px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
+  #sidebar-header h1 { font-family: 'Amiri', serif; font-size: 1.3rem; font-weight: 400; color: var(--gold-light); letter-spacing: 0.04em; line-height: 1.3; }
+  #sidebar-header p { font-size: 0.7rem; color: rgba(247,243,235,0.4); margin-top: 3px; letter-spacing: 0.08em; text-transform: uppercase; }
   #surah-search {
-    display: block;
-    width: calc(100% - 40px);
-    margin: 12px 20px 0;
-    padding: 6px 10px;
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(184,134,11,0.25);
-    border-radius: 4px;
-    color: var(--parchment);
-    font-family: 'Crimson Pro', serif;
-    font-size: 0.88rem;
-    outline: none;
-    transition: border-color 0.2s;
+    display: block; width: calc(100% - 40px); margin: 10px 20px 0;
+    padding: 6px 10px; background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(184,134,11,0.25); border-radius: 4px;
+    color: var(--parchment); font-family: 'Crimson Pro', serif; font-size: 0.88rem;
+    outline: none; transition: border-color 0.2s;
   }
   #surah-search::placeholder { color: rgba(247,243,235,0.3); }
   #surah-search:focus { border-color: var(--gold-light); }
-
-  #surah-list { list-style: none; padding: 8px 0 40px; flex: 1; }
+  #surah-list { list-style: none; padding: 6px 0 40px; flex: 1; }
   #surah-list button {
-    width: 100%;
-    background: none; border: none; cursor: pointer;
-    padding: 6px 20px;
-    text-align: left;
-    display: grid;
-    grid-template-columns: 24px 1fr auto;
-    grid-template-rows: auto auto;
-    gap: 0 8px;
-    color: rgba(247,243,235,0.75);
-    font-family: 'Crimson Pro', serif;
-    font-size: 0.88rem;
-    transition: background 0.15s, color 0.15s;
-    line-height: 1.3;
-    align-items: center;
+    width: 100%; background: none; border: none; cursor: pointer;
+    padding: 6px 20px; text-align: left;
+    display: grid; grid-template-columns: 24px 1fr auto; grid-template-rows: auto auto; gap: 0 8px;
+    color: rgba(247,243,235,0.75); font-family: 'Crimson Pro', serif; font-size: 0.88rem;
+    transition: background 0.15s, color 0.15s; line-height: 1.3; align-items: center;
   }
   #surah-list button:hover { background: rgba(184,134,11,0.1); color: var(--gold-light); }
   #surah-list button.active { background: rgba(184,134,11,0.15); color: var(--gold-light); border-right: 2px solid var(--gold); }
-  #surah-list button .s-num {
-    font-size: 0.68rem;
-    opacity: 0.45;
-    grid-row: 1 / 3;
-    grid-column: 1;
-    align-self: center;
-    text-align: right;
-  }
-  #surah-list button .s-name {
-    grid-row: 1; grid-column: 2;
-    font-size: 0.9rem;
-  }
-  #surah-list button .s-meaning {
-    grid-row: 2; grid-column: 2;
-    font-size: 0.72rem;
-    opacity: 0.45;
-    font-style: italic;
-  }
-  #surah-list button .s-meaning.custom-name {
-    opacity: 0.7;
-    color: var(--gold-light);
-  }
-  #surah-list button .s-arabic {
-    font-family: 'Amiri', serif;
-    font-size: 1rem;
-    opacity: 0.5;
-    direction: rtl;
-    grid-row: 1 / 3; grid-column: 3;
-    align-self: center;
-  }
+  #surah-list button .s-num { font-size: 0.68rem; opacity: 0.45; grid-row: 1/3; grid-column: 1; text-align: right; align-self: center; }
+  #surah-list button .s-name { grid-row: 1; grid-column: 2; font-size: 0.9rem; }
+  #surah-list button .s-meaning { grid-row: 2; grid-column: 2; font-size: 0.72rem; opacity: 0.45; font-style: italic; }
+  #surah-list button .s-meaning.edited { opacity: 0.75; color: var(--gold-light); }
+  #surah-list button .s-arabic { font-family: 'Amiri', serif; font-size: 1rem; opacity: 0.5; direction: rtl; grid-row: 1/3; grid-column: 3; align-self: center; }
 
-  /* ─── MAIN ─── */
+  /* MAIN */
   #main { margin-left: 270px; min-height: 100vh; }
 
-  /* ─── TOP BAR ─── */
+  /* TOPBAR */
   #topbar {
     position: sticky; top: 0; z-index: 50;
-    background: rgba(247,243,235,0.95);
-    backdrop-filter: blur(8px);
+    background: rgba(247,243,235,0.96); backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--border);
-    padding: 12px 40px;
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 10px 32px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
   }
-  #topbar-title {
-    font-family: 'Amiri', serif;
-    font-size: 1.25rem;
-    color: var(--ink);
-    flex: 1;
+  #topbar-title { font-family: 'Amiri', serif; font-size: 1.2rem; color: var(--ink); flex: 1; min-width: 0; }
+  #topbar-title span { font-size: 0.76rem; font-family: 'Cormorant Garamond', serif; color: var(--ink-soft); font-weight: 300; margin-left: 8px; letter-spacing: 0.05em; }
+  .tbtn {
+    display: flex; align-items: center; gap: 5px; cursor: pointer;
+    font-size: 0.74rem; letter-spacing: 0.06em; text-transform: uppercase;
+    background: none; border: 1px solid currentColor; border-radius: 3px; padding: 4px 10px;
+    font-family: 'Crimson Pro', serif; transition: all 0.18s; white-space: nowrap;
   }
-  #topbar-title span { font-size: 0.78rem; font-family: 'Cormorant Garamond', serif; color: var(--ink-soft); font-weight: 300; margin-left: 10px; letter-spacing: 0.05em; }
-  .topbar-btn {
-    display: flex; align-items: center; gap: 6px;
-    cursor: pointer;
-    font-size: 0.78rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    background: none; border: 1px solid currentColor;
-    border-radius: 3px; padding: 5px 11px;
-    font-family: 'Crimson Pro', serif;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  #edit-toggle { color: var(--teal); }
-  #edit-toggle:hover, #edit-toggle.active { background: var(--teal); color: white; border-color: var(--teal); }
-  #dict-toggle { color: var(--rust); }
-  #dict-toggle:hover, #dict-toggle.active { background: var(--rust); color: white; border-color: var(--rust); }
-  .topbar-btn svg { width: 12px; height: 12px; flex-shrink: 0; }
+  .tbtn svg { width: 11px; height: 11px; flex-shrink: 0; }
+  #btn-dict  { color: var(--rust); }
+  #btn-dict.on  { background: var(--rust);  color: white; border-color: var(--rust); }
+  #btn-notes { color: #2a5c8a; }
+  #btn-notes.on { background: #2a5c8a; color: white; border-color: #2a5c8a; }
+  #btn-edit  { color: var(--teal); }
+  #btn-edit.on  { background: var(--teal);  color: white; border-color: var(--teal); }
 
-  /* ─── CONTENT ─── */
-  #content {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 40px 40px 100px;
-  }
+  /* CONTENT */
+  #content { max-width: 800px; margin: 0 auto; padding: 36px 36px 100px; }
 
-  /* ─── SURAH HEADER ─── */
-  #surah-header {
-    text-align: center;
-    margin-bottom: 40px;
-    padding-bottom: 32px;
-    border-bottom: 1px solid var(--border);
-  }
-  #surah-header .arabic-title {
-    font-family: 'Amiri', serif;
-    font-size: 2.8rem;
-    direction: rtl;
-    color: var(--ink);
-    line-height: 1.4;
-    margin-bottom: 6px;
-  }
-  #surah-header .eng-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.5rem;
-    font-weight: 300;
-    color: var(--ink-soft);
-    letter-spacing: 0.06em;
-  }
-  /* editable surah name in header */
+  /* SURAH HEADER */
+  #surah-header { text-align: center; margin-bottom: 36px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
+  #surah-header .sh-arabic { font-family: 'Amiri', serif; font-size: 2.6rem; direction: rtl; color: var(--ink); line-height: 1.4; margin-bottom: 6px; }
+  #surah-header .sh-name { font-family: 'Cormorant Garamond', serif; font-size: 1.45rem; font-weight: 300; color: var(--ink-soft); letter-spacing: 0.06em; }
   .surah-name-input {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.5rem;
-    font-weight: 300;
-    color: var(--ink);
-    letter-spacing: 0.06em;
-    text-align: center;
-    background: rgba(26,92,90,0.05);
-    border: 1px dashed rgba(26,92,90,0.4);
-    border-radius: 4px;
-    padding: 4px 12px;
-    outline: none;
-    width: 100%;
-    max-width: 400px;
+    font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 300;
+    color: var(--ink); letter-spacing: 0.06em; text-align: center;
+    background: rgba(26,92,90,0.05); border: 1px dashed rgba(26,92,90,0.4);
+    border-radius: 4px; padding: 3px 12px; outline: none; width: 100%; max-width: 380px;
     transition: border-color 0.2s;
   }
   .surah-name-input:focus { border-color: var(--teal); }
-  #surah-header .meta {
-    font-size: 0.78rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-top: 6px;
-  }
+  #surah-header .sh-meta { font-size: 0.76rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-top: 5px; }
   .bismillah {
-    font-family: 'Amiri', serif;
-    font-size: 1.8rem;
-    text-align: center;
-    direction: rtl;
-    color: var(--gold);
-    margin-bottom: 36px;
-    padding: 16px;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
+    font-family: 'Amiri', serif; font-size: 1.75rem; text-align: center; direction: rtl;
+    color: var(--gold); margin-bottom: 32px; padding: 14px;
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
     background: linear-gradient(to right, transparent, var(--gold-pale), transparent);
   }
 
-  /* ─── VERSE ─── */
-  .verse {
-    margin-bottom: 32px;
-    padding-bottom: 28px;
-    border-bottom: 1px solid rgba(184,134,11,0.12);
-    animation: fadeIn 0.3s ease both;
-  }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  /* VERSE */
+  .verse { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid rgba(184,134,11,0.12); animation: fadeIn 0.3s ease both; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
-  /* ─── ARABIC WITH WORD LINKS ─── */
+  /* ARABIC */
   .verse-arabic {
-    font-family: 'Amiri', serif;
-    font-size: 1.75rem;
-    line-height: 2.4;
-    direction: rtl;
-    text-align: right;
-    color: var(--ink);
-    margin-bottom: 14px;
-    padding: 10px 16px 6px;
+    font-family: 'Amiri', serif; font-size: 1.75rem; line-height: 2.4;
+    direction: rtl; text-align: right; color: var(--ink);
+    margin-bottom: 12px; padding: 8px 14px 4px;
     background: linear-gradient(to left, rgba(240,228,184,0.2), transparent);
     border-right: 3px solid var(--gold-pale);
   }
-  /* word link mode */
-  .arabic-word {
-    display: inline;
-    cursor: default;
-    border-radius: 3px;
-    transition: background 0.15s, color 0.15s;
-    padding: 0 1px;
+  .aw { display: inline; border-radius: 3px; padding: 0 1px; transition: background 0.13s, color 0.13s; }
+  .aw.link {
+    cursor: pointer; text-decoration: none; color: inherit;
   }
-  .arabic-word.linkable {
-    cursor: pointer;
-    text-decoration: none;
-    color: inherit;
+  .aw.link:hover { background: var(--gold-pale); color: var(--rust); text-decoration: underline; text-decoration-color: rgba(184,134,11,0.5); text-underline-offset: 3px; }
+  .dict-bar {
+    display: none; font-size: 0.68rem; letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--rust); opacity: 0.65; margin-bottom: 6px; font-family: 'Crimson Pro', serif;
+    direction: ltr; text-align: right; padding-right: 4px;
   }
-  .arabic-word.linkable:hover {
-    background: var(--gold-pale);
-    color: var(--rust);
-    text-decoration: underline;
-    text-decoration-color: rgba(184,134,11,0.4);
-    text-underline-offset: 3px;
-  }
-  .dict-hint {
-    font-size: 0.7rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--rust);
-    opacity: 0.7;
-    margin-top: 4px;
-    display: none;
-    font-family: 'Crimson Pro', serif;
-    direction: ltr;
-    text-align: left;
-  }
-  .dict-mode .dict-hint { display: block; }
+  .dict-on .dict-bar { display: block; }
 
-  /* ─── TRANSLATION ─── */
-  .verse-number-badge {
+  /* TRANSLATION */
+  .vtw { display: flex; align-items: flex-start; gap: 10px; margin-top: 2px; }
+  .vnum {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 28px; height: 28px;
-    border: 1px solid var(--gold);
-    border-radius: 50%;
-    font-size: 0.72rem;
-    color: var(--gold);
-    font-family: 'Crimson Pro', serif;
-    float: left;
-    margin-top: 4px;
-    margin-right: 12px;
-    flex-shrink: 0;
+    width: 26px; height: 26px; border: 1px solid var(--gold); border-radius: 50%;
+    font-size: 0.7rem; color: var(--gold); font-family: 'Crimson Pro', serif;
+    flex-shrink: 0; margin-top: 3px;
   }
-  .verse-translation-wrap { display: flex; align-items: flex-start; gap: 12px; margin-top: 2px; }
-  .verse-translation {
-    flex: 1;
-    font-size: 1.1rem;
-    line-height: 1.75;
-    color: var(--ink-soft);
-    font-style: italic;
-    font-weight: 300;
+  .vtrans {
+    flex: 1; font-size: 1.08rem; line-height: 1.75; color: var(--ink-soft);
+    font-style: italic; font-weight: 300;
   }
-  .verse-translation.view-mode { cursor: default; }
-  .verse-translation.edit-mode {
-    background: rgba(26,92,90,0.04);
-    border: 1px dashed rgba(26,92,90,0.35);
-    border-radius: 4px;
-    padding: 6px 10px;
-    outline: none;
-    font-style: italic;
-    font-size: 1.1rem;
-    line-height: 1.75;
-    font-family: 'Crimson Pro', serif;
-    color: var(--ink);
-    width: 100%;
-    resize: none;
-    overflow: hidden;
-    cursor: text;
-    min-height: 60px;
-    transition: border-color 0.2s, background 0.2s;
+  .vtrans.edit-mode {
+    background: rgba(26,92,90,0.04); border: 1px dashed rgba(26,92,90,0.35);
+    border-radius: 4px; padding: 5px 9px; outline: none; font-style: italic;
+    font-size: 1.08rem; line-height: 1.75; font-family: 'Crimson Pro', serif;
+    color: var(--ink); width: 100%; resize: none; overflow: hidden;
+    cursor: text; min-height: 56px; transition: border-color 0.2s, background 0.2s;
   }
-  .verse-translation.edit-mode:focus { border-color: var(--teal); background: rgba(26,92,90,0.07); }
-  .edit-indicator {
-    font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--teal); opacity: 0; transition: opacity 0.2s; margin-top: 4px; display: block;
-  }
-  .verse-translation.edit-mode:focus ~ .edit-indicator { opacity: 1; }
-  .custom-badge {
-    display: inline-block; font-size: 0.6rem; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--teal); border: 1px solid var(--teal);
-    border-radius: 2px; padding: 1px 4px; margin-left: 6px; vertical-align: middle; opacity: 0.7;
+  .vtrans.edit-mode:focus { border-color: var(--teal); background: rgba(26,92,90,0.07); }
+  .edit-hint { font-size: 0.63rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--teal); opacity: 0; transition: opacity 0.2s; margin-top: 3px; display: block; }
+  .vtrans.edit-mode:focus ~ .edit-hint { opacity: 1; }
+  .cbadge {
+    display: inline-block; font-size: 0.58rem; letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--teal); border: 1px solid var(--teal); border-radius: 2px;
+    padding: 1px 4px; margin-left: 5px; vertical-align: middle; opacity: 0.7;
   }
 
-  /* ─── TOOLTIP ─── */
-  #word-tooltip {
-    position: fixed;
-    background: var(--ink);
-    color: var(--parchment);
-    font-family: 'Crimson Pro', serif;
-    font-size: 0.85rem;
-    padding: 6px 12px;
-    border-radius: 4px;
-    pointer-events: none;
-    z-index: 999;
-    opacity: 0;
-    transition: opacity 0.15s;
-    max-width: 220px;
-    line-height: 1.4;
-    border: 1px solid rgba(184,134,11,0.3);
-    white-space: nowrap;
+  /* COMMENTARY */
+  .commentary {
+    display: none; margin-top: 12px; padding: 12px 14px;
+    background: rgba(42,92,138,0.06); border-left: 3px solid rgba(42,92,138,0.35);
+    border-radius: 0 4px 4px 0; font-size: 0.92rem; line-height: 1.7;
+    color: var(--ink-soft); font-style: normal;
   }
-  #word-tooltip.show { opacity: 1; }
-  #word-tooltip .tip-arabic { font-family: 'Amiri', serif; font-size: 1.1rem; direction: rtl; color: var(--gold-light); display: block; }
-  #word-tooltip .tip-sub { font-size: 0.72rem; opacity: 0.55; margin-top: 2px; display: block; }
+  .commentary.visible { display: block; }
+  .commentary-label {
+    font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: #2a5c8a; font-style: normal; margin-bottom: 6px; display: block; opacity: 0.8;
+  }
+  .commentary-text { font-size: 0.93rem; line-height: 1.72; }
+  .commentary-loading { opacity: 0.45; font-style: italic; font-size: 0.88rem; }
+  .commentary-toggle {
+    display: none; margin-top: 8px; background: none; border: none; cursor: pointer;
+    font-family: 'Crimson Pro', serif; font-size: 0.75rem; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #2a5c8a; opacity: 0.7; padding: 0;
+    transition: opacity 0.2s;
+  }
+  .commentary-toggle:hover { opacity: 1; }
+  .notes-on .commentary-toggle { display: inline-block; }
 
-  /* ─── LOADING ─── */
-  #loader {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    min-height: 300px; gap: 16px; color: var(--ink-soft);
+  /* TOOLTIP */
+  #tip {
+    position: fixed; background: var(--ink); color: var(--parchment);
+    font-family: 'Crimson Pro', serif; font-size: 0.82rem;
+    padding: 5px 11px; border-radius: 4px; pointer-events: none;
+    z-index: 999; opacity: 0; transition: opacity 0.13s; max-width: 200px;
+    line-height: 1.4; border: 1px solid rgba(184,134,11,0.3); white-space: nowrap;
   }
-  .loader-ring {
-    width: 36px; height: 36px;
-    border: 2px solid var(--gold-pale);
-    border-top-color: var(--gold);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
+  #tip.show { opacity: 1; }
+  #tip .tip-ar { font-family: 'Amiri', serif; font-size: 1.05rem; direction: rtl; color: var(--gold-light); display: block; }
+  #tip .tip-sub { font-size: 0.68rem; opacity: 0.5; margin-top: 1px; display: block; }
+
+  /* LOADER */
+  #loader { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px; gap: 14px; color: var(--ink-soft); }
+  .ring { width: 34px; height: 34px; border: 2px solid var(--gold-pale); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  #loader p { font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.6; }
+  #loader p { font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.55; }
 
-  /* ─── WELCOME ─── */
-  #welcome { text-align: center; padding: 80px 20px; color: var(--ink-soft); }
-  #welcome .logo-arabic { font-family: 'Amiri', serif; font-size: 4rem; color: var(--gold); direction: rtl; margin-bottom: 20px; line-height: 1.3; }
-  #welcome h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 300; letter-spacing: 0.1em; margin-bottom: 10px; }
-  #welcome p { font-size: 0.95rem; opacity: 0.6; max-width: 420px; margin: 0 auto; line-height: 1.7; }
+  /* WELCOME */
+  #welcome { text-align: center; padding: 70px 20px; color: var(--ink-soft); }
+  #welcome .w-ar { font-family: 'Amiri', serif; font-size: 3.5rem; color: var(--gold); direction: rtl; margin-bottom: 18px; line-height: 1.3; }
+  #welcome h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 300; letter-spacing: 0.1em; margin-bottom: 10px; }
+  #welcome p { font-size: 0.92rem; opacity: 0.6; max-width: 440px; margin: 0 auto; line-height: 1.75; }
+  #welcome ul { list-style: none; margin-top: 20px; display: inline-flex; flex-direction: column; gap: 5px; text-align: left; font-size: 0.85rem; opacity: 0.55; }
+  #welcome ul li::before { content: '→ '; color: var(--gold); }
 
-  /* ─── SAVE BAR ─── */
+  /* SAVE BAR */
   #save-bar {
     position: fixed; bottom: 0; left: 270px; right: 0;
-    background: var(--teal); color: white;
-    padding: 10px 40px;
+    background: var(--teal); color: white; padding: 9px 36px;
     display: flex; align-items: center; justify-content: space-between;
-    font-size: 0.85rem; letter-spacing: 0.05em;
+    font-size: 0.82rem; letter-spacing: 0.05em;
     transform: translateY(100%); transition: transform 0.25s ease; z-index: 90;
   }
   #save-bar.visible { transform: translateY(0); }
-  #save-bar button {
-    background: white; color: var(--teal); border: none; border-radius: 3px;
-    padding: 5px 16px; cursor: pointer; font-family: 'Crimson Pro', serif;
-    font-size: 0.85rem; font-weight: 600; letter-spacing: 0.05em; transition: opacity 0.2s;
-  }
+  #save-bar button { background: white; color: var(--teal); border: none; border-radius: 3px; padding: 4px 14px; cursor: pointer; font-family: 'Crimson Pro', serif; font-size: 0.82rem; font-weight: 600; }
   #save-bar button:hover { opacity: 0.85; }
-  #save-bar .saved-msg { opacity: 0; font-size: 0.78rem; letter-spacing: 0.08em; transition: opacity 0.3s; }
-  #save-bar .saved-msg.show { opacity: 1; }
+  .saved-flash { opacity: 0; font-size: 0.75rem; letter-spacing: 0.07em; transition: opacity 0.3s; }
+  .saved-flash.show { opacity: 1; }
 
-  /* ─── MOBILE ─── */
-  #menu-toggle {
-    display: none;
-    position: fixed; top: 14px; left: 14px; z-index: 200;
-    background: var(--ink); color: var(--gold-light);
-    border: none; border-radius: 4px; cursor: pointer;
-    padding: 7px 10px; font-size: 1.1rem;
-  }
+  /* MOBILE */
+  #menu-btn { display: none; position: fixed; top: 12px; left: 12px; z-index: 200; background: var(--ink); color: var(--gold-light); border: none; border-radius: 4px; cursor: pointer; padding: 7px 10px; font-size: 1.1rem; }
   #overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 99; }
-
   @media (max-width: 720px) {
     #sidebar { transform: translateX(-100%); }
     #sidebar.open { transform: translateX(0); }
-    #main { margin-left: 0; }
-    #save-bar { left: 0; }
-    #topbar { padding: 10px 12px 10px 52px; flex-wrap: wrap; gap: 8px; }
-    #topbar-title { font-size: 1rem; }
+    #main { margin-left: 0; } #save-bar { left: 0; }
+    #topbar { padding: 9px 12px 9px 50px; }
     #content { padding: 20px 14px 80px; }
-    #menu-toggle { display: block; }
-    #overlay.show { display: block; }
+    #menu-btn { display: block; } #overlay.show { display: block; }
   }
-
   #sidebar::-webkit-scrollbar { width: 4px; }
   #sidebar::-webkit-scrollbar-thumb { background: rgba(184,134,11,0.3); border-radius: 2px; }
 </style>
 </head>
 <body>
 
-<div id="word-tooltip"><span class="tip-arabic"></span><span class="tip-sub">Click to open in dictionary</span></div>
-<button id="menu-toggle" aria-label="Open menu">☰</button>
+<div id="tip"><span class="tip-ar"></span><span class="tip-sub">Click → Quranic Arabic Corpus</span></div>
+<button id="menu-btn">☰</button>
 <div id="overlay"></div>
 
-<!-- SIDEBAR -->
 <nav id="sidebar">
   <div id="sidebar-header">
     <h1>القرآن الكريم</h1>
     <p>Editable Translation Reader</p>
     <input id="surah-search" type="search" placeholder="Search surah or meaning…" autocomplete="off" />
   </div>
-  <ul id="surah-list"><li style="padding:20px;opacity:.4;font-size:.85rem">Loading surahs…</li></ul>
+  <ul id="surah-list"><li style="padding:20px;opacity:.4;font-size:.85rem">Loading…</li></ul>
 </nav>
 
-<!-- MAIN -->
 <div id="main">
   <div id="topbar">
-    <div id="topbar-title">Select a Surah <span id="topbar-meta"></span></div>
-    <button id="dict-toggle" class="topbar-btn" title="Toggle dictionary word links">
+    <div id="topbar-title">Select a Surah <span id="tb-meta"></span></div>
+    <button id="btn-dict" class="tbtn" title="Link each Arabic word to corpus.quran.com dictionary">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
-      Dictionary Links
+      Dictionary
     </button>
-    <button id="edit-toggle" class="topbar-btn" title="Toggle edit mode">
+    <button id="btn-notes" class="tbtn" title="Show/hide Maududi commentary notes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Commentary
+    </button>
+    <button id="btn-edit" class="tbtn" title="Edit verse translations and surah names">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-      Edit Translations
+      Edit
     </button>
   </div>
 
   <div id="content">
     <div id="welcome">
-      <div class="logo-arabic">بِسْمِ ٱللَّهِ</div>
+      <div class="w-ar">بِسْمِ ٱللَّهِ</div>
       <h2>Quran Reader</h2>
-      <p>Select a surah from the sidebar. Toggle <em>Edit Translations</em> to customise any verse or surah name. Toggle <em>Dictionary Links</em> to make each Arabic word clickable — opening it in the Lane's Lexicon dictionary.</p>
+      <p>Select a surah from the sidebar to begin. Three tools available in the toolbar:</p>
+      <ul>
+        <li><strong>Dictionary</strong> — each Arabic word links to corpus.quran.com for grammar &amp; morphology</li>
+        <li><strong>Commentary</strong> — shows Maududi tafsir notes per verse (where available)</li>
+        <li><strong>Edit</strong> — customise any verse translation or surah name; saved locally</li>
+      </ul>
     </div>
   </div>
 </div>
 
-<!-- SAVE BAR -->
 <div id="save-bar">
   <span>Unsaved edits</span>
-  <div style="display:flex;align-items:center;gap:16px">
-    <span class="saved-msg" id="saved-msg">✓ Saved</span>
+  <div style="display:flex;align-items:center;gap:14px">
+    <span class="saved-flash" id="saved-flash">✓ Saved</span>
     <button id="save-btn">Save All</button>
   </div>
 </div>
 
 <script>
-// ─── STATE ───────────────────────────────────────────────────────
-const STORAGE_KEY = 'quran_custom_translations';
-const SURAH_NAME_KEY = 'quran_custom_surah_names';
+// ── STORAGE KEYS ─────────────────────────────────────────
+const SK_TRANS = 'quran_trans_v2';
+const SK_NAMES = 'quran_names_v2';
+
+// ── STATE ────────────────────────────────────────────────
 let surahs = [];
 let currentSurah = null;
-let editMode = false;
-let dictMode = false;
-let pendingChanges = {};       // verse edits  { "1:1": "text" }
-let pendingNameChanges = {};   // surah name edits { 1: "My Name" }
-let savedTranslations = {};
-let savedSurahNames = {};
-let allVerses = [];
+let editMode  = false;
+let dictMode  = false;
+let notesMode = false;
+let pendingTrans = {};   // { "2:3": "text" }
+let pendingNames = {};   // { 2: "name" }
+let savedTrans = {};
+let savedNames = {};
+let allVerses  = [];
+let tafsirCache = {};    // { surahNum: [ {number, text} ] }
 
-// ─── LOAD SAVED ──────────────────────────────────────────────────
+// ── INIT ─────────────────────────────────────────────────
 function loadSaved() {
-  try { savedTranslations = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { savedTranslations = {}; }
-  try { savedSurahNames = JSON.parse(localStorage.getItem(SURAH_NAME_KEY) || '{}'); } catch { savedSurahNames = {}; }
+  try { savedTrans = JSON.parse(localStorage.getItem(SK_TRANS) || '{}'); } catch { savedTrans = {}; }
+  try { savedNames = JSON.parse(localStorage.getItem(SK_NAMES) || '{}'); } catch { savedNames = {}; }
 }
 
 function saveAll() {
-  Object.assign(savedTranslations, pendingChanges);
-  Object.assign(savedSurahNames, pendingNameChanges);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(savedTranslations));
-  localStorage.setItem(SURAH_NAME_KEY, JSON.stringify(savedSurahNames));
-  pendingChanges = {};
-  pendingNameChanges = {};
+  Object.assign(savedTrans, pendingTrans);
+  Object.assign(savedNames, pendingNames);
+  localStorage.setItem(SK_TRANS, JSON.stringify(savedTrans));
+  localStorage.setItem(SK_NAMES, JSON.stringify(savedNames));
+  pendingTrans = {}; pendingNames = {};
   updateSaveBar();
-  // refresh sidebar to show updated names
-  renderSurahList(surahs.filter(s => {
-    const q = document.getElementById('surah-search').value.toLowerCase();
-    return !q || s.englishName.toLowerCase().includes(q) ||
-      s.englishNameTranslation.toLowerCase().includes(q) ||
-      (savedSurahNames[s.number] || '').toLowerCase().includes(q) ||
-      String(s.number).includes(q);
-  }));
-  const msg = document.getElementById('saved-msg');
-  msg.classList.add('show');
-  setTimeout(() => msg.classList.remove('show'), 2000);
+  reRenderSidebar();
+  const f = document.getElementById('saved-flash');
+  f.classList.add('show');
+  setTimeout(() => f.classList.remove('show'), 2000);
 }
 
 function updateSaveBar() {
-  const bar = document.getElementById('save-bar');
-  const hasChanges = Object.keys(pendingChanges).length > 0 || Object.keys(pendingNameChanges).length > 0;
-  bar.classList.toggle('visible', hasChanges);
+  const has = Object.keys(pendingTrans).length + Object.keys(pendingNames).length > 0;
+  document.getElementById('save-bar').classList.toggle('visible', has);
 }
 
 document.getElementById('save-btn').addEventListener('click', saveAll);
 
-// ─── TOGGLES ─────────────────────────────────────────────────────
-document.getElementById('edit-toggle').addEventListener('click', () => {
+// ── BUTTON TOGGLES ───────────────────────────────────────
+document.getElementById('btn-edit').addEventListener('click', () => {
   editMode = !editMode;
-  document.getElementById('edit-toggle').classList.toggle('active', editMode);
+  document.getElementById('btn-edit').classList.toggle('on', editMode);
   if (currentSurah !== null) renderVerses(allVerses, currentSurah);
 });
-
-document.getElementById('dict-toggle').addEventListener('click', () => {
+document.getElementById('btn-dict').addEventListener('click', () => {
   dictMode = !dictMode;
-  document.getElementById('dict-toggle').classList.toggle('active', dictMode);
+  document.getElementById('btn-dict').classList.toggle('on', dictMode);
   if (currentSurah !== null) renderVerses(allVerses, currentSurah);
 });
+document.getElementById('btn-notes').addEventListener('click', async () => {
+  notesMode = !notesMode;
+  document.getElementById('btn-notes').classList.toggle('on', notesMode);
+  if (currentSurah !== null) {
+    if (notesMode && !tafsirCache[currentSurah]) {
+      await loadTafsir(currentSurah);
+    }
+    renderVerses(allVerses, currentSurah);
+  }
+});
 
-// ─── FETCH SURAHS ────────────────────────────────────────────────
+// ── FETCH SURAHS ─────────────────────────────────────────
 async function fetchSurahs() {
   try {
     const r = await fetch('https://api.alquran.cloud/v1/surah');
-    const d = await r.json();
-    surahs = d.data;
-    renderSurahList(surahs);
+    surahs = (await r.json()).data;
+    reRenderSidebar();
   } catch {
     document.getElementById('surah-list').innerHTML =
       '<li style="padding:20px;color:#c55;font-size:.82rem">Failed to load. Check connection.</li>';
   }
 }
 
-// ─── RENDER SURAH LIST ───────────────────────────────────────────
+function reRenderSidebar() {
+  const q = document.getElementById('surah-search').value.toLowerCase();
+  renderSurahList(q
+    ? surahs.filter(s =>
+        s.englishName.toLowerCase().includes(q) ||
+        s.englishNameTranslation.toLowerCase().includes(q) ||
+        (savedNames[s.number]||'').toLowerCase().includes(q) ||
+        String(s.number).includes(q))
+    : surahs);
+}
+
 function renderSurahList(list) {
   const ul = document.getElementById('surah-list');
   ul.innerHTML = '';
   list.forEach(s => {
-    const customName = savedSurahNames[s.number] || pendingNameChanges[s.number];
-    const displayMeaning = customName || s.englishNameTranslation;
-    const isCustom = !!customName;
-
+    const custom = savedNames[s.number] || pendingNames[s.number];
+    const meaning = custom || s.englishNameTranslation;
+    const isEdited = !!custom;
     const li = document.createElement('li');
     const btn = document.createElement('button');
     btn.dataset.num = s.number;
-    btn.innerHTML = `
-      <span class="s-num">${s.number}</span>
+    btn.innerHTML = `<span class="s-num">${s.number}</span>
       <span class="s-name">${s.englishName}</span>
-      <span class="s-meaning${isCustom ? ' custom-name' : ''}">${escHtml(displayMeaning)}</span>
+      <span class="s-meaning${isEdited?' edited':''}">${escHtml(meaning)}</span>
       <span class="s-arabic">${s.name}</span>`;
     btn.addEventListener('click', () => loadSurah(s.number));
     li.appendChild(btn);
     ul.appendChild(li);
   });
-  // re-mark active
-  if (currentSurah !== null) {
-    document.querySelectorAll('#surah-list button').forEach(b => {
-      b.classList.toggle('active', Number(b.dataset.num) === currentSurah);
-    });
-  }
+  markActive();
 }
 
-// ─── SEARCH ──────────────────────────────────────────────────────
-document.getElementById('surah-search').addEventListener('input', e => {
-  const q = e.target.value.toLowerCase();
-  renderSurahList(surahs.filter(s =>
-    !q ||
-    s.englishName.toLowerCase().includes(q) ||
-    s.englishNameTranslation.toLowerCase().includes(q) ||
-    (savedSurahNames[s.number] || '').toLowerCase().includes(q) ||
-    String(s.number).includes(q)
-  ));
-});
+function markActive() {
+  document.querySelectorAll('#surah-list button').forEach(b =>
+    b.classList.toggle('active', Number(b.dataset.num) === currentSurah));
+}
 
-// ─── LOAD SURAH ──────────────────────────────────────────────────
+document.getElementById('surah-search').addEventListener('input', reRenderSidebar);
+
+// ── LOAD SURAH ───────────────────────────────────────────
 async function loadSurah(num) {
   currentSurah = num;
-  document.querySelectorAll('#surah-list button').forEach(b => {
-    b.classList.toggle('active', Number(b.dataset.num) === num);
-  });
+  markActive();
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('overlay').classList.remove('show');
 
   const content = document.getElementById('content');
-  content.innerHTML = `<div id="loader"><div class="loader-ring"></div><p>Loading surah ${num}…</p></div>`;
+  content.innerHTML = `<div id="loader"><div class="ring"></div><p>Loading surah ${num}…</p></div>`;
 
   try {
-    const [arRes, enRes] = await Promise.all([
+    const reqs = [
       fetch(`https://api.alquran.cloud/v1/surah/${num}`),
       fetch(`https://api.alquran.cloud/v1/surah/${num}/en.asad`)
-    ]);
-    const arData = await arRes.json();
-    const enData = await enRes.json();
-    const arAyahs = arData.data.ayahs;
-    const enAyahs = enData.data.ayahs;
+    ];
+    if (notesMode && !tafsirCache[num]) reqs.push(loadTafsir(num));
+
+    const [arRes, enRes] = await Promise.all(reqs);
+    const arAyahs = (await arRes.json()).data.ayahs;
+    const enAyahs = (await enRes.json()).data.ayahs;
 
     allVerses = arAyahs.map((a, i) => ({
       number: a.numberInSurah,
@@ -634,160 +447,177 @@ async function loadSurah(num) {
     document.title = `${s.englishName} — Quran Reader`;
 
     renderVerses(allVerses, num);
-  } catch {
+  } catch (e) {
     content.innerHTML = `<div id="loader"><p style="color:#c55">Error loading surah. Please try again.</p></div>`;
   }
 }
 
-// ─── ARABIC WORD WRAPPING ─────────────────────────────────────────
-// Splits Arabic text into individual words, each wrapped in a span.
-// In dict mode, each word links to the corpus dictionary search.
-function wrapArabicWords(text, surahNum, verseNum) {
-  const words = text.split(/\s+/).filter(Boolean);
-  return words.map((word, wi) => {
-    // Build dictionary URL — Lane's Lexicon via quranite corpus or almaany
-    const encoded = encodeURIComponent(word);
-    const dictUrl = `https://reader.quranite.com/corpus/search?q=${encoded}`;
+// ── LOAD TAFSIR (Maududi) ────────────────────────────────
+async function loadTafsir(num) {
+  try {
+    const r = await fetch(`https://api.alquran.cloud/v1/surah/${num}/en.maududi`);
+    const data = await r.json();
+    tafsirCache[num] = data.data.ayahs; // array of {numberInSurah, text}
+  } catch {
+    tafsirCache[num] = [];
+  }
+}
+
+// ── ARABIC WORD WRAPPING ─────────────────────────────────
+// Links each word to corpus.quran.com word-by-word page for that specific verse
+function wrapWords(text, surahNum, verseNum) {
+  return text.split(/\s+/).filter(Boolean).map((word, wi) => {
     if (dictMode) {
-      return `<a class="arabic-word linkable" href="${dictUrl}" target="_blank" rel="noopener"
-        data-word="${escHtml(word)}">${word}</a>`;
-    } else {
-      return `<span class="arabic-word" data-word="${escHtml(word)}">${word}</span>`;
+      // Direct link to the word-by-word page for this verse on corpus.quran.com
+      const url = `https://corpus.quran.com/wordbyword.jsp?chapter=${surahNum}&verse=${verseNum}#(${surahNum}:${verseNum}:${wi+1})`;
+      return `<a class="aw link" href="${url}" target="_blank" rel="noopener" data-word="${escHtml(word)}">${word}</a>`;
     }
+    return `<span class="aw" data-word="${escHtml(word)}">${word}</span>`;
   }).join(' ');
 }
 
-// ─── RENDER VERSES ───────────────────────────────────────────────
+// ── RENDER VERSES ────────────────────────────────────────
 function renderVerses(verses, surahNum) {
   const s = surahs.find(x => x.number === surahNum);
   const content = document.getElementById('content');
 
-  const customSurahName = pendingNameChanges[surahNum] !== undefined
-    ? pendingNameChanges[surahNum]
-    : (savedSurahNames[surahNum] !== undefined ? savedSurahNames[surahNum] : null);
-  const displaySurahMeaning = customSurahName !== null ? customSurahName : s.englishNameTranslation;
-  const isNameCustom = customSurahName !== null;
+  const customName = pendingNames[surahNum] ?? savedNames[surahNum] ?? null;
+  const displayMeaning = customName !== null ? customName : s.englishNameTranslation;
+  const nameEdited = customName !== null;
 
-  // Surah header
+  // ── Surah header
   let html = `<div id="surah-header">
-    <div class="arabic-title">${s.name}</div>
-    <div class="eng-title">${s.englishName}</div>`;
+    <div class="sh-arabic">${s.name}</div>
+    <div class="sh-name">${s.englishName}</div>`;
 
   if (editMode) {
-    html += `<div style="display:flex;justify-content:center;margin-top:6px;gap:8px;align-items:center">
-      <input class="surah-name-input" id="surah-name-input" type="text"
-        value="${escHtml(displaySurahMeaning)}"
-        placeholder="Surah meaning / name…"
-        data-original="${escHtml(s.englishNameTranslation)}"
-        data-surah="${surahNum}" />
+    html += `<div style="display:flex;justify-content:center;margin-top:8px">
+      <input class="surah-name-input" id="sni" type="text"
+        value="${escHtml(displayMeaning)}"
+        placeholder="Surah meaning…"
+        data-orig="${escHtml(s.englishNameTranslation)}"
+        data-snum="${surahNum}" />
     </div>
-    <div class="meta" style="margin-top:6px">${s.numberOfAyahs} Verses &bull; ${s.revelationType} &bull; <span style="color:var(--teal);font-size:0.7rem">name is editable above</span></div>`;
+    <div class="sh-meta">${s.numberOfAyahs} Verses &bull; ${s.revelationType} &bull; <span style="color:var(--teal);font-size:0.68rem">↑ name editable above</span></div>`;
   } else {
-    html += `<div class="meta">${escHtml(displaySurahMeaning)}${isNameCustom ? ' <span class="custom-badge">edited</span>' : ''} &bull; ${s.numberOfAyahs} Verses &bull; ${s.revelationType}</div>`;
+    html += `<div class="sh-meta">${escHtml(displayMeaning)}${nameEdited?'<span class="cbadge">edited</span>':''} &bull; ${s.numberOfAyahs} Verses &bull; ${s.revelationType}</div>`;
   }
-
   html += `</div>`;
 
-  if (surahNum !== 9) {
-    html += `<div class="bismillah">بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ</div>`;
-  }
+  if (surahNum !== 9) html += `<div class="bismillah">بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ</div>`;
 
+  // ── Verses
   verses.forEach((v, idx) => {
-    const storedKey = savedTranslations[v.key];
-    const pendingKey = pendingChanges[v.key];
-    const displayText = pendingKey !== undefined ? pendingKey : (storedKey !== undefined ? storedKey : v.translation);
-    const isCustom = storedKey !== undefined || pendingKey !== undefined;
+    const stored  = savedTrans[v.key];
+    const pending = pendingTrans[v.key];
+    const display = pending !== undefined ? pending : (stored !== undefined ? stored : v.translation);
+    const isEdited = stored !== undefined || pending !== undefined;
 
-    const arabicHtml = wrapArabicWords(v.arabic, surahNum, v.number);
-
-    html += `<div class="verse${dictMode ? ' dict-mode' : ''}" style="animation-delay:${Math.min(idx * 0.03, 0.6)}s">
-      <div class="verse-arabic">${arabicHtml}</div>
-      ${dictMode ? `<div class="dict-hint">↑ Click any word to look it up in the dictionary</div>` : ''}
-      <div class="verse-translation-wrap">
-        <span class="verse-number-badge">${v.number}</span>`;
-
-    if (editMode) {
-      html += `<div class="verse-edit-block" style="flex:1">
-        <textarea class="verse-translation edit-mode"
-          data-key="${v.key}"
-          data-original="${escHtml(v.translation)}"
-          rows="1">${escHtml(displayText)}</textarea>
-        <span class="edit-indicator">editing…</span>
-      </div>`;
-    } else {
-      html += `<div class="verse-translation view-mode">${escHtml(displayText)}${isCustom ? '<span class="custom-badge">edited</span>' : ''}</div>`;
+    // tafsir for this verse
+    let tafsirText = '';
+    if (notesMode && tafsirCache[surahNum]) {
+      const tEntry = tafsirCache[surahNum].find(t => t.numberInSurah === v.number);
+      tafsirText = tEntry ? tEntry.text : '';
     }
 
-    html += `</div></div>`;
+    const arabicHtml = wrapWords(v.arabic, surahNum, v.number);
+
+    html += `<div class="verse${dictMode?' dict-on':''}${notesMode?' notes-on':''}" style="animation-delay:${Math.min(idx*0.025,0.5)}s">
+      <div class="verse-arabic">${arabicHtml}</div>
+      <div class="dict-bar">↑ tap any word · corpus.quran.com</div>
+      <div class="vtw">
+        <span class="vnum">${v.number}</span>`;
+
+    if (editMode) {
+      html += `<div style="flex:1">
+        <textarea class="vtrans edit-mode" data-key="${v.key}" data-orig="${escHtml(v.translation)}" rows="1">${escHtml(display)}</textarea>
+        <span class="edit-hint">editing translation…</span>
+      </div>`;
+    } else {
+      html += `<div class="vtrans">${escHtml(display)}${isEdited?'<span class="cbadge">edited</span>':''}</div>`;
+    }
+
+    html += `</div>`;
+
+    // commentary block
+    if (notesMode) {
+      const hasNote = tafsirText.length > 0;
+      html += `<button class="commentary-toggle" data-idx="${idx}">▸ Commentary</button>
+        <div class="commentary" id="cm-${idx}">
+          <span class="commentary-label">Maududi — Tafhim al-Qur'an</span>
+          <div class="commentary-text">${hasNote ? escHtml(tafsirText) : '<span class="commentary-loading">No note available for this verse.</span>'}</div>
+        </div>`;
+    }
+
+    html += `</div>`;
   });
 
   content.innerHTML = html;
 
-  // Surah name input listener
-  const nameInput = document.getElementById('surah-name-input');
-  if (nameInput) {
-    nameInput.addEventListener('input', () => {
-      const val = nameInput.value;
-      const orig = nameInput.dataset.original;
-      const sNum = Number(nameInput.dataset.surah);
-      if (val === orig) { delete pendingNameChanges[sNum]; }
-      else { pendingNameChanges[sNum] = val; }
+  // ── Surah name input
+  const sni = document.getElementById('sni');
+  if (sni) {
+    sni.addEventListener('input', () => {
+      const val = sni.value, orig = sni.dataset.orig, snum = Number(sni.dataset.snum);
+      if (val === orig) delete pendingNames[snum]; else pendingNames[snum] = val;
       updateSaveBar();
-      // update sidebar live
-      const sideBtn = document.querySelector(`#surah-list button[data-num="${sNum}"] .s-meaning`);
-      if (sideBtn) { sideBtn.textContent = val || orig; sideBtn.classList.toggle('custom-name', val !== orig && val !== ''); }
+      const sideEl = document.querySelector(`#surah-list button[data-num="${snum}"] .s-meaning`);
+      if (sideEl) { sideEl.textContent = val || orig; sideEl.classList.toggle('edited', val !== orig && val !== ''); }
     });
   }
 
-  // Textarea listeners
+  // ── Verse textarea listeners
   if (editMode) {
-    content.querySelectorAll('textarea.verse-translation').forEach(ta => {
-      autoResize(ta);
+    content.querySelectorAll('textarea.vtrans').forEach(ta => {
+      autoH(ta);
       ta.addEventListener('input', () => {
-        autoResize(ta);
-        const key = ta.dataset.key;
-        const val = ta.value;
-        if (val === ta.dataset.original) { delete pendingChanges[key]; }
-        else { pendingChanges[key] = val; }
+        autoH(ta);
+        const key = ta.dataset.key, val = ta.value;
+        if (val === ta.dataset.orig) delete pendingTrans[key]; else pendingTrans[key] = val;
         updateSaveBar();
       });
     });
   }
 
-  // Word tooltip (only in dict mode — tooltip on hover before click)
-  if (dictMode) {
-    const tooltip = document.getElementById('word-tooltip');
-    content.querySelectorAll('.arabic-word.linkable').forEach(el => {
-      el.addEventListener('mouseenter', (e) => {
-        tooltip.querySelector('.tip-arabic').textContent = el.dataset.word;
-        tooltip.classList.add('show');
-        positionTooltip(e);
+  // ── Commentary toggles
+  if (notesMode) {
+    content.querySelectorAll('.commentary-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = btn.dataset.idx;
+        const cm = document.getElementById(`cm-${idx}`);
+        const open = cm.classList.toggle('visible');
+        btn.textContent = (open ? '▾' : '▸') + ' Commentary';
       });
-      el.addEventListener('mousemove', positionTooltip);
-      el.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+    });
+  }
+
+  // ── Word tooltips (dict mode)
+  if (dictMode) {
+    const tip = document.getElementById('tip');
+    content.querySelectorAll('.aw.link').forEach(el => {
+      el.addEventListener('mouseenter', e => {
+        tip.querySelector('.tip-ar').textContent = el.dataset.word;
+        tip.classList.add('show'); posTip(e);
+      });
+      el.addEventListener('mousemove', posTip);
+      el.addEventListener('mouseleave', () => tip.classList.remove('show'));
     });
   }
 }
 
-function positionTooltip(e) {
-  const tip = document.getElementById('word-tooltip');
-  const x = e.clientX + 14, y = e.clientY - 44;
-  tip.style.left = Math.min(x, window.innerWidth - 240) + 'px';
-  tip.style.top = Math.max(y, 8) + 'px';
+function posTip(e) {
+  const t = document.getElementById('tip');
+  t.style.left = Math.min(e.clientX + 12, window.innerWidth - 220) + 'px';
+  t.style.top  = Math.max(e.clientY - 48, 8) + 'px';
 }
 
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = el.scrollHeight + 'px';
+function autoH(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// ─── MOBILE MENU ─────────────────────────────────────────────────
-document.getElementById('menu-toggle').addEventListener('click', () => {
+// ── MOBILE ───────────────────────────────────────────────
+document.getElementById('menu-btn').addEventListener('click', () => {
   document.getElementById('sidebar').classList.add('open');
   document.getElementById('overlay').classList.add('show');
 });
@@ -796,7 +626,6 @@ document.getElementById('overlay').addEventListener('click', () => {
   document.getElementById('overlay').classList.remove('show');
 });
 
-// ─── INIT ────────────────────────────────────────────────────────
 loadSaved();
 fetchSurahs();
 </script>
