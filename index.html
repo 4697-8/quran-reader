@@ -479,7 +479,7 @@ async function loadSurah(num) {
 
     const s = surahs.find(x => x.number === num);
     document.getElementById('topbar-title').innerHTML =
-      `${s.englishName} <span>${s.englishNameTranslation} &middot; ${s.numberOfAyahs} verses &middot; ${s.revelationType}</span>`;
+      `${s.englishName} <span>${s.englishNameTranslation} &middot; ${s.numberOfAyahs} verses</span>`;
     document.title = `${s.englishName} — Quran Reader`;
 
     renderVerses(allVerses, num);
@@ -534,9 +534,9 @@ function renderVerses(verses, surahNum) {
         data-orig="${escHtml(s.englishNameTranslation)}"
         data-snum="${surahNum}" />
     </div>
-    <div class="sh-meta">${s.numberOfAyahs} Verses &bull; ${s.revelationType} &bull; <span style="color:var(--teal);font-size:0.68rem">↑ name editable above</span></div>`;
+    <div class="sh-meta">${s.numberOfAyahs} Verses &bull; <span style="color:var(--teal);font-size:0.68rem">↑ name editable above</span></div>`;
   } else {
-    html += `<div class="sh-meta">${escHtml(displayMeaning)}${nameEdited?'<span class="cbadge">edited</span>':''} &bull; ${s.numberOfAyahs} Verses &bull; ${s.revelationType}</div>`;
+    html += `<div class="sh-meta">${escHtml(displayMeaning)}${nameEdited?'<span class="cbadge">edited</span>':''} &bull; ${s.numberOfAyahs} Verses</div>`;
   }
   html += `</div>`;
 
