@@ -190,18 +190,48 @@
   }
   .commentary-text { font-size: 0.92rem; line-height: 1.72; color: var(--ink-soft); }
   .commentary-loading { opacity: 0.45; font-style: italic; font-size: 0.88rem; }
-  /* My Notes textarea */
-  .note-textarea {
-    width: 100%; background: rgba(255,255,255,0.6);
+  /* Rich Note Editor */
+  .note-editor-wrap {
     border: 1px dashed rgba(42,92,138,0.35); border-radius: 4px;
-    padding: 7px 10px; font-family: 'Crimson Pro', serif;
-    font-size: 0.95rem; line-height: 1.7; color: var(--ink);
-    resize: none; overflow: hidden; outline: none; min-height: 60px;
-    transition: border-color 0.2s, background 0.2s;
+    background: rgba(255,255,255,0.6); transition: border-color 0.2s, background 0.2s;
+    overflow: hidden;
   }
-  .note-textarea:focus { border-color: #2a5c8a; background: white; }
-  .note-textarea::placeholder { color: rgba(26,18,8,0.3); font-style: italic; }
-  .note-has-content { border-color: rgba(42,92,138,0.5) !important; }
+  .note-editor-wrap:focus-within { border-color: #2a5c8a; background: white; }
+  .note-editor-wrap.note-has-content { border-color: rgba(42,92,138,0.5); }
+
+  /* Toolbar */
+  .note-toolbar {
+    display: flex; align-items: center; gap: 2px; flex-wrap: wrap;
+    padding: 5px 8px; border-bottom: 1px solid rgba(42,92,138,0.12);
+    background: rgba(42,92,138,0.04);
+  }
+  .note-toolbar button {
+    background: none; border: 1px solid transparent; border-radius: 3px;
+    cursor: pointer; padding: 2px 6px; font-size: 0.8rem; line-height: 1.4;
+    color: #2a5c8a; font-family: 'Crimson Pro', serif;
+    transition: background 0.13s, border-color 0.13s; min-width: 24px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .note-toolbar button:hover { background: rgba(42,92,138,0.1); border-color: rgba(42,92,138,0.25); }
+  .note-toolbar button.active { background: rgba(42,92,138,0.15); border-color: rgba(42,92,138,0.4); }
+  .note-toolbar .tb-sep { width: 1px; height: 16px; background: rgba(42,92,138,0.2); margin: 0 3px; flex-shrink: 0; }
+  .note-toolbar .tb-color { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(0,0,0,0.15); cursor: pointer; padding: 0; flex-shrink: 0; }
+  .note-toolbar .tb-color:hover { transform: scale(1.2); }
+  .note-toolbar label { font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; color: #2a5c8a; opacity: 0.6; margin-left: 2px; cursor: default; }
+  .note-toolbar input[type=color] {
+    width: 20px; height: 20px; padding: 0; border: 1px solid rgba(42,92,138,0.3);
+    border-radius: 3px; cursor: pointer; background: none;
+  }
+
+  /* Editable area */
+  .note-editable {
+    padding: 8px 10px; font-family: 'Crimson Pro', serif;
+    font-size: 0.95rem; line-height: 1.7; color: var(--ink);
+    outline: none; min-height: 60px; white-space: pre-wrap; word-break: break-word;
+  }
+  .note-editable:empty::before {
+    content: attr(data-placeholder); color: rgba(26,18,8,0.3); font-style: italic; pointer-events: none;
+  }
   .commentary-toggle {
     display: none; margin-top: 8px; background: none; border: none; cursor: pointer;
     font-family: 'Crimson Pro', serif; font-size: 0.75rem; letter-spacing: 0.07em;
@@ -514,6 +544,38 @@ function wrapWords(text, surahNum, verseNum) {
   }).join(' ');
 }
 
+// ── RICH NOTE EDITOR BUILDER ─────────────────────────────
+function buildNoteEditor(noteKey, savedContent, placeholder) {
+  const hasContent = savedContent && savedContent.length > 0;
+  return `<div class="note-editor-wrap${hasContent ? ' note-has-content' : ''}">
+    <div class="note-toolbar">
+      <button data-cmd="bold" title="Bold"><b>B</b></button>
+      <button data-cmd="italic" title="Italic"><i>I</i></button>
+      <button data-cmd="underline" title="Underline"><u>U</u></button>
+      <div class="tb-sep"></div>
+      <button data-cmd="insertUnorderedList" title="Bullet list">☰</button>
+      <button data-cmd="insertOrderedList" title="Numbered list">①</button>
+      <div class="tb-sep"></div>
+      <label>Color</label>
+      <input type="color" value="#1a1208" title="Text colour" />
+      <div class="tb-sep"></div>
+      <button data-cmd="removeFormat" title="Clear formatting" style="font-size:0.7rem;opacity:0.6">✕ fmt</button>
+    </div>
+    <div class="note-editable" contenteditable="true"
+      data-notekey="${noteKey}"
+      data-placeholder="${placeholder}"
+    >${savedContent || ''}</div>
+  </div>`;
+}
+
+function updateToolbarState(toolbar) {
+  if (!toolbar) return;
+  ['bold','italic','underline'].forEach(cmd => {
+    const btn = toolbar.querySelector(`button[data-cmd="${cmd}"]`);
+    if (btn) btn.classList.toggle('active', document.queryCommandState(cmd));
+  });
+}
+
 // ── RENDER VERSES ────────────────────────────────────────
 function renderVerses(verses, surahNum) {
   const s = surahs.find(x => x.number === surahNum);
@@ -554,10 +616,7 @@ function renderVerses(verses, surahNum) {
       <div class="commentary surah-note-panel${hasSurahNote ? ' visible' : ''}" id="surah-note-panel">
         <div class="cm-section mynotes-section">
           <span class="commentary-label">My Notes on Surah ${s.englishName} <span style="opacity:0.5;font-size:0.58rem;letter-spacing:0.05em;text-transform:none;font-style:italic">— saved locally</span></span>
-          <textarea class="note-textarea${hasSurahNote ? ' note-has-content' : ''}"
-            data-notekey="${surahNoteKey}"
-            placeholder="Write your notes, background, or reflections on this surah…"
-            rows="2">${escHtml(surahNote)}</textarea>
+          ${buildNoteEditor(surahNoteKey, surahNote, 'Write your notes, background, or reflections on this surah…')}
         </div>
       </div>
     </div>`;
@@ -613,10 +672,7 @@ function renderVerses(verses, surahNum) {
           </div>
           <div class="cm-section mynotes-section">
             <span class="commentary-label">My Notes <span style="opacity:0.5;font-size:0.58rem;letter-spacing:0.05em;text-transform:none;font-style:italic">— saved locally</span></span>
-            <textarea class="note-textarea${hasMyNote ? ' note-has-content' : ''}"
-              data-notekey="${noteKey}"
-              placeholder="Write your own notes, reflections, or commentary for this verse…"
-              rows="2">${escHtml(myNote)}</textarea>
+            ${buildNoteEditor(noteKey, myNote, 'Write your own notes, reflections, or commentary for this verse…')}
           </div>
         </div>`;
     }
@@ -662,37 +718,54 @@ function renderVerses(verses, surahNum) {
         const badge = surahNoteToggle.querySelector('.has-note-badge');
         const badgeHtml = badge ? ' ' + badge.outerHTML : '';
         surahNoteToggle.innerHTML = (open ? '▾' : '▸') + ' Notes on this Surah' + badgeHtml;
-        if (open) { const ta = panel.querySelector('.note-textarea'); if (ta) autoH(ta); }
       });
     }
-    content.querySelectorAll('.commentary-toggle').forEach(btn => {
+    content.querySelectorAll('.commentary-toggle:not(.surah-note-toggle)').forEach(btn => {
       btn.addEventListener('click', () => {
         const idx = btn.dataset.idx;
         const cm = document.getElementById(`cm-${idx}`);
         const open = cm.classList.toggle('visible');
-        // preserve the "my note" badge text when toggling label
         const badge = btn.querySelector('.has-note-badge');
         const badgeHtml = badge ? ' ' + badge.outerHTML : '';
         btn.innerHTML = (open ? '▾' : '▸') + ' Notes' + badgeHtml;
-        if (open) {
-          // auto-resize the textarea when opened
-          const ta = cm.querySelector('.note-textarea');
-          if (ta) autoH(ta);
-        }
       });
     });
 
-    // Note textarea listeners
-    content.querySelectorAll('.note-textarea').forEach(ta => {
-      autoH(ta);
-      ta.addEventListener('input', () => {
-        autoH(ta);
-        const key = ta.dataset.notekey;
-        const val = ta.value;
+    // Note editable listeners
+    content.querySelectorAll('.note-editable').forEach(el => {
+      el.addEventListener('input', () => {
+        const key = el.dataset.notekey;
+        const val = el.innerHTML;
         pendingNotes[key] = val;
-        ta.classList.toggle('note-has-content', val.length > 0);
+        const wrap = el.closest('.note-editor-wrap');
+        if (wrap) wrap.classList.toggle('note-has-content', el.innerText.trim().length > 0);
         updateSaveBar();
       });
+    });
+
+    // Toolbar button listeners
+    content.querySelectorAll('.note-toolbar button[data-cmd]').forEach(btn => {
+      btn.addEventListener('mousedown', e => {
+        e.preventDefault(); // keep focus in editable
+        const cmd = btn.dataset.cmd;
+        const val = btn.dataset.val || null;
+        document.execCommand(cmd, false, val);
+        // toggle active state for bold/italic/underline
+        updateToolbarState(btn.closest('.note-toolbar'));
+      });
+    });
+
+    // Color picker
+    content.querySelectorAll('.note-toolbar input[type=color]').forEach(picker => {
+      picker.addEventListener('input', () => {
+        document.execCommand('foreColor', false, picker.value);
+      });
+    });
+
+    // Update toolbar state on selection change
+    content.querySelectorAll('.note-editable').forEach(el => {
+      el.addEventListener('keyup', () => updateToolbarState(el.closest('.note-editor-wrap').querySelector('.note-toolbar')));
+      el.addEventListener('mouseup', () => updateToolbarState(el.closest('.note-editor-wrap').querySelector('.note-toolbar')));
     });
   }
 
