@@ -210,6 +210,8 @@
   }
   .commentary-toggle:hover { opacity: 1; }
   .notes-on .commentary-toggle { display: inline-block; }
+  .surah-note-wrap { margin-bottom: 24px; }
+  .surah-note-wrap .commentary-toggle { display: inline-block; font-size: 0.78rem; }
   /* show note indicator badge when saved note exists */
   .has-note-badge {
     display: inline-block; font-size: 0.58rem; letter-spacing: 0.07em; text-transform: uppercase;
@@ -540,6 +542,27 @@ function renderVerses(verses, surahNum) {
   }
   html += `</div>`;
 
+  // ── Surah-level notes (shown when notesMode is on)
+  if (notesMode) {
+    const surahNoteKey = `surah:${surahNum}`;
+    const surahNote = pendingNotes[surahNoteKey] !== undefined ? pendingNotes[surahNoteKey] : (savedNotes[surahNoteKey] || '');
+    const hasSurahNote = surahNote.length > 0;
+    html += `<div class="surah-note-wrap notes-on">
+      <button class="commentary-toggle surah-note-toggle" data-snkey="${surahNoteKey}">
+        ${hasSurahNote ? '▾' : '▸'} Notes on this Surah${hasSurahNote ? ' <span class="has-note-badge">my note</span>' : ''}
+      </button>
+      <div class="commentary surah-note-panel${hasSurahNote ? ' visible' : ''}" id="surah-note-panel">
+        <div class="cm-section mynotes-section">
+          <span class="commentary-label">My Notes on Surah ${s.englishName} <span style="opacity:0.5;font-size:0.58rem;letter-spacing:0.05em;text-transform:none;font-style:italic">— saved locally</span></span>
+          <textarea class="note-textarea${hasSurahNote ? ' note-has-content' : ''}"
+            data-notekey="${surahNoteKey}"
+            placeholder="Write your notes, background, or reflections on this surah…"
+            rows="2">${escHtml(surahNote)}</textarea>
+        </div>
+      </div>
+    </div>`;
+  }
+
   if (surahNum !== 9) html += `<div class="bismillah">بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ</div>`;
 
   // ── Verses
@@ -630,6 +653,18 @@ function renderVerses(verses, surahNum) {
 
   // ── Commentary toggles
   if (notesMode) {
+    // Surah-level note toggle
+    const surahNoteToggle = content.querySelector('.surah-note-toggle');
+    if (surahNoteToggle) {
+      surahNoteToggle.addEventListener('click', () => {
+        const panel = document.getElementById('surah-note-panel');
+        const open = panel.classList.toggle('visible');
+        const badge = surahNoteToggle.querySelector('.has-note-badge');
+        const badgeHtml = badge ? ' ' + badge.outerHTML : '';
+        surahNoteToggle.innerHTML = (open ? '▾' : '▸') + ' Notes on this Surah' + badgeHtml;
+        if (open) { const ta = panel.querySelector('.note-textarea'); if (ta) autoH(ta); }
+      });
+    }
     content.querySelectorAll('.commentary-toggle').forEach(btn => {
       btn.addEventListener('click', () => {
         const idx = btn.dataset.idx;
