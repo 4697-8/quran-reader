@@ -82,6 +82,8 @@
     font-family: 'Crimson Pro', serif; transition: all 0.18s; white-space: nowrap;
   }
   .tbtn svg { width: 11px; height: 11px; flex-shrink: 0; }
+  #btn-bookmarks { color: var(--gold); }
+  #btn-bookmarks.on { background: var(--gold); color: white; border-color: var(--gold); }
   #btn-dict  { color: var(--rust); }
   #btn-dict.on  { background: var(--rust);  color: white; border-color: var(--rust); }
   #btn-notes { color: #2a5c8a; }
@@ -112,8 +114,81 @@
     background: linear-gradient(to right, transparent, var(--gold-pale), transparent);
   }
 
-  /* VERSE */
-  .verse { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid rgba(184,134,11,0.12); animation: fadeIn 0.3s ease both; }
+  /* BOOKMARK BUTTON */
+  .bm-btn {
+    background: none; border: none; cursor: pointer; padding: 2px 4px;
+    opacity: 0.25; transition: opacity 0.2s, transform 0.15s; flex-shrink: 0;
+    margin-top: 2px; color: var(--gold);
+  }
+  .bm-btn:hover { opacity: 0.7; transform: scale(1.15); }
+  .bm-btn.bookmarked { opacity: 1; }
+  .bm-btn svg { width: 15px; height: 15px; display: block; }
+
+  /* BOOKMARK MODAL */
+  #bm-modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(26,18,8,0.55);
+    z-index: 300; align-items: center; justify-content: center;
+  }
+  #bm-modal-overlay.show { display: flex; }
+  #bm-modal {
+    background: var(--parchment); border-radius: 6px; padding: 24px;
+    width: 340px; max-width: calc(100vw - 32px);
+    box-shadow: 0 8px 32px rgba(26,18,8,0.25);
+    border: 1px solid var(--border);
+  }
+  #bm-modal h3 { font-family: 'Amiri', serif; font-size: 1.1rem; color: var(--ink); margin-bottom: 4px; }
+  #bm-modal .bm-ref { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  #bm-modal label { display: block; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 5px; opacity: 0.7; }
+  #bm-label-input {
+    width: 100%; padding: 7px 10px; font-family: 'Crimson Pro', serif; font-size: 1rem;
+    border: 1px solid var(--border); border-radius: 4px; background: white;
+    outline: none; color: var(--ink); transition: border-color 0.2s;
+    margin-bottom: 14px;
+  }
+  #bm-label-input:focus { border-color: var(--gold); }
+  .bm-colors { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .bm-color-opt {
+    width: 22px; height: 22px; border-radius: 50%; cursor: pointer;
+    border: 2px solid transparent; transition: transform 0.15s, border-color 0.15s;
+  }
+  .bm-color-opt:hover { transform: scale(1.2); }
+  .bm-color-opt.selected { border-color: var(--ink); transform: scale(1.15); }
+  .bm-modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
+  .bm-modal-btns button {
+    font-family: 'Crimson Pro', serif; font-size: 0.85rem; letter-spacing: 0.05em;
+    padding: 6px 16px; border-radius: 3px; cursor: pointer; border: none;
+    transition: opacity 0.2s;
+  }
+  .bm-modal-btns button:hover { opacity: 0.8; }
+  #bm-save-btn { background: var(--gold); color: white; }
+  #bm-remove-btn { background: #c55; color: white; display: none; }
+  #bm-cancel-btn { background: rgba(26,18,8,0.08); color: var(--ink); }
+
+  /* BOOKMARKS PANEL in sidebar */
+  #bm-panel { display: none; flex-direction: column; }
+  #bm-panel.show { display: flex; }
+  #bm-panel-header {
+    padding: 14px 20px 10px; border-bottom: 1px solid rgba(184,134,11,0.2);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  #bm-panel-header h2 { font-family: 'Amiri', serif; font-size: 1rem; font-weight: 400; color: var(--gold-light); }
+  #bm-close-btn { background: none; border: none; color: rgba(247,243,235,0.4); cursor: pointer; font-size: 1rem; line-height: 1; padding: 2px 4px; }
+  #bm-close-btn:hover { color: var(--gold-light); }
+  #bm-list { list-style: none; padding: 8px 0 40px; overflow-y: auto; flex: 1; }
+  .bm-item {
+    padding: 8px 16px; border-bottom: 1px solid rgba(184,134,11,0.08);
+    cursor: pointer; transition: background 0.15s; display: flex; align-items: flex-start; gap: 10px;
+  }
+  .bm-item:hover { background: rgba(184,134,11,0.08); }
+  .bm-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .bm-item-text { flex: 1; min-width: 0; }
+  .bm-item-ref { font-size: 0.7rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--gold-light); opacity: 0.7; }
+  .bm-item-label { font-size: 0.88rem; color: rgba(247,243,235,0.8); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bm-item-label.no-label { font-style: italic; opacity: 0.35; }
+  .bm-empty { padding: 24px 20px; font-size: 0.85rem; opacity: 0.35; font-style: italic; }
+
+  /* Verse highlighted when bookmarked */
+  .verse.bm-highlighted { border-left: 3px solid var(--gold); padding-left: 10px; background: linear-gradient(to right, rgba(184,134,11,0.05), transparent); }
   @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
   /* ARABIC */
@@ -316,12 +391,42 @@
     <p>Editable Translation Reader</p>
     <input id="surah-search" type="search" placeholder="Search surah or meaning…" autocomplete="off" />
   </div>
+  <!-- Surah list view -->
   <ul id="surah-list"><li style="padding:20px;opacity:.4;font-size:.85rem">Loading…</li></ul>
+  <!-- Bookmarks panel view -->
+  <div id="bm-panel">
+    <div id="bm-panel-header">
+      <h2>Bookmarks</h2>
+      <button id="bm-close-btn" title="Back to surahs">✕</button>
+    </div>
+    <ul id="bm-list"></ul>
+  </div>
 </nav>
+
+<!-- Bookmark modal -->
+<div id="bm-modal-overlay">
+  <div id="bm-modal">
+    <h3>Bookmark Verse</h3>
+    <div class="bm-ref" id="bm-modal-ref"></div>
+    <label for="bm-label-input">Label (optional)</label>
+    <input id="bm-label-input" type="text" placeholder="e.g. Patience, Gratitude, Study…" maxlength="60" />
+    <label>Colour tag</label>
+    <div class="bm-colors" id="bm-colors"></div>
+    <div class="bm-modal-btns">
+      <button id="bm-remove-btn">Remove</button>
+      <button id="bm-cancel-btn">Cancel</button>
+      <button id="bm-save-btn">Save</button>
+    </div>
+  </div>
+</div>
 
 <div id="main">
   <div id="topbar">
     <div id="topbar-title">Select a Surah <span id="tb-meta"></span></div>
+    <button id="btn-bookmarks" class="tbtn" title="View bookmarks">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+      Bookmarks
+    </button>
     <button id="btn-dict" class="tbtn" title="Link each Arabic word to corpus.quran.com dictionary">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
       Dictionary
@@ -363,6 +468,7 @@
 const SK_TRANS = 'quran_trans_v2';
 const SK_NAMES = 'quran_names_v2';
 const SK_NOTES = 'quran_notes_v2';
+const SK_BOOKMARKS = 'quran_bookmarks_v1';
 
 // ── STATE ────────────────────────────────────────────────
 let surahs = [];
@@ -376,6 +482,7 @@ let pendingNotes = {};   // { "2:3": "my note" }
 let savedTrans = {};
 let savedNames = {};
 let savedNotes = {};
+let savedBookmarks = {}; // { "2:3": { label:"", color:"#b8860b", surahName:"Al-Baqarah", verseNum:3, surahNum:2 } }
 let allVerses  = [];
 let tafsirCache = {};    // { surahNum: [ {number, text} ] }
 
@@ -384,6 +491,7 @@ function loadSaved() {
   try { savedTrans  = JSON.parse(localStorage.getItem(SK_TRANS)  || '{}'); } catch { savedTrans  = {}; }
   try { savedNames  = JSON.parse(localStorage.getItem(SK_NAMES)  || '{}'); } catch { savedNames  = {}; }
   try { savedNotes  = JSON.parse(localStorage.getItem(SK_NOTES)  || '{}'); } catch { savedNotes  = {}; }
+  try { savedBookmarks = JSON.parse(localStorage.getItem(SK_BOOKMARKS) || '{}'); } catch { savedBookmarks = {}; }
 }
 
 function saveAll() {
@@ -429,6 +537,145 @@ document.getElementById('btn-notes').addEventListener('click', async () => {
     renderVerses(allVerses, currentSurah);
   }
 });
+
+// ── BOOKMARKS ────────────────────────────────────────────
+const BM_COLORS = ['#b8860b','#1a5c5a','#8b3a1a','#2a5c8a','#5a3a8a','#2a7a3a','#c0392b','#555'];
+let bmModalKey = null;
+let bmSelectedColor = BM_COLORS[0];
+
+function saveBookmarks() {
+  localStorage.setItem(SK_BOOKMARKS, JSON.stringify(savedBookmarks));
+}
+
+// Init color swatches in modal
+function initBmModal() {
+  const container = document.getElementById('bm-colors');
+  BM_COLORS.forEach(c => {
+    const d = document.createElement('div');
+    d.className = 'bm-color-opt' + (c === bmSelectedColor ? ' selected' : '');
+    d.style.background = c;
+    d.dataset.color = c;
+    d.addEventListener('click', () => {
+      bmSelectedColor = c;
+      container.querySelectorAll('.bm-color-opt').forEach(x => x.classList.toggle('selected', x.dataset.color === c));
+    });
+    container.appendChild(d);
+  });
+}
+
+function openBmModal(key, surahNum, verseNum, surahName) {
+  bmModalKey = key;
+  const bm = savedBookmarks[key];
+  document.getElementById('bm-modal-ref').textContent = `Surah ${surahNum} — Verse ${verseNum}`;
+  document.getElementById('bm-label-input').value = bm ? (bm.label || '') : '';
+  bmSelectedColor = bm ? bm.color : BM_COLORS[0];
+  document.querySelectorAll('.bm-color-opt').forEach(x => x.classList.toggle('selected', x.dataset.color === bmSelectedColor));
+  document.getElementById('bm-remove-btn').style.display = bm ? 'inline-block' : 'none';
+  document.getElementById('bm-modal-overlay').classList.add('show');
+  document.getElementById('bm-label-input').focus();
+  // store meta on modal for saving
+  document.getElementById('bm-modal').dataset.surahNum = surahNum;
+  document.getElementById('bm-modal').dataset.verseNum = verseNum;
+  document.getElementById('bm-modal').dataset.surahName = surahName;
+}
+
+document.getElementById('bm-save-btn').addEventListener('click', () => {
+  const modal = document.getElementById('bm-modal');
+  const label = document.getElementById('bm-label-input').value.trim();
+  savedBookmarks[bmModalKey] = {
+    label, color: bmSelectedColor,
+    surahNum: Number(modal.dataset.surahNum),
+    verseNum: Number(modal.dataset.verseNum),
+    surahName: modal.dataset.surahName,
+    savedAt: Date.now()
+  };
+  saveBookmarks();
+  closeBmModal();
+  // refresh bookmark icon in verse
+  const btn = document.querySelector(`.bm-btn[data-key="${bmModalKey}"]`);
+  if (btn) {
+    btn.classList.add('bookmarked');
+    btn.querySelector('svg').setAttribute('fill', bmSelectedColor);
+    btn.querySelector('svg').setAttribute('stroke', bmSelectedColor);
+    btn.closest('.verse').classList.add('bm-highlighted');
+    btn.closest('.verse').style.borderLeftColor = bmSelectedColor;
+  }
+  renderBmList();
+});
+
+document.getElementById('bm-remove-btn').addEventListener('click', () => {
+  delete savedBookmarks[bmModalKey];
+  saveBookmarks();
+  closeBmModal();
+  const btn = document.querySelector(`.bm-btn[data-key="${bmModalKey}"]`);
+  if (btn) {
+    btn.classList.remove('bookmarked');
+    btn.querySelector('svg').setAttribute('fill', 'none');
+    btn.querySelector('svg').setAttribute('stroke', 'currentColor');
+    const v = btn.closest('.verse');
+    v.classList.remove('bm-highlighted');
+    v.style.borderLeftColor = '';
+  }
+  renderBmList();
+});
+
+document.getElementById('bm-cancel-btn').addEventListener('click', closeBmModal);
+document.getElementById('bm-modal-overlay').addEventListener('click', e => { if (e.target === document.getElementById('bm-modal-overlay')) closeBmModal(); });
+
+function closeBmModal() {
+  document.getElementById('bm-modal-overlay').classList.remove('show');
+  bmModalKey = null;
+}
+
+// Bookmarks sidebar panel
+document.getElementById('btn-bookmarks').addEventListener('click', () => {
+  showBmPanel(true);
+});
+document.getElementById('bm-close-btn').addEventListener('click', () => {
+  showBmPanel(false);
+});
+
+function showBmPanel(show) {
+  document.getElementById('surah-list').style.display = show ? 'none' : '';
+  document.getElementById('surah-search').style.display = show ? 'none' : '';
+  document.getElementById('bm-panel').classList.toggle('show', show);
+  document.getElementById('btn-bookmarks').classList.toggle('on', show);
+  if (show) renderBmList();
+}
+
+function renderBmList() {
+  const ul = document.getElementById('bm-list');
+  const entries = Object.entries(savedBookmarks).sort((a,b) => (b[1].savedAt||0) - (a[1].savedAt||0));
+  if (!entries.length) {
+    ul.innerHTML = '<li class="bm-empty">No bookmarks yet. Click the bookmark icon on any verse to save it.</li>';
+    return;
+  }
+  ul.innerHTML = '';
+  entries.forEach(([key, bm]) => {
+    const li = document.createElement('li');
+    li.className = 'bm-item';
+    li.innerHTML = `<div class="bm-dot" style="background:${bm.color}"></div>
+      <div class="bm-item-text">
+        <div class="bm-item-ref">${bm.surahName} · ${bm.surahNum}:${bm.verseNum}</div>
+        <div class="bm-item-label${bm.label ? '' : ' no-label'}">${bm.label || 'No label'}</div>
+      </div>`;
+    li.addEventListener('click', () => {
+      showBmPanel(false);
+      if (bm.surahNum !== currentSurah) {
+        loadSurah(bm.surahNum).then(() => scrollToVerse(key));
+      } else {
+        scrollToVerse(key);
+      }
+    });
+    ul.appendChild(li);
+  });
+}
+
+function scrollToVerse(key) {
+  // key is "surahNum:verseNum"
+  const el = document.querySelector(`.bm-btn[data-key="${key}"]`);
+  if (el) el.closest('.verse').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
 
 // ── FETCH SURAHS ─────────────────────────────────────────
 async function fetchSurahs() {
@@ -640,7 +887,11 @@ function renderVerses(verses, surahNum) {
 
     const arabicHtml = wrapWords(v.arabic, surahNum, v.number);
 
-    html += `<div class="verse${dictMode?' dict-on':''}${notesMode?' notes-on':''}" style="animation-delay:${Math.min(idx*0.025,0.5)}s">
+    const bm = savedBookmarks[v.key];
+    const bmColor = bm ? bm.color : 'currentColor';
+    const bmFill = bm ? bm.color : 'none';
+
+    html += `<div class="verse${dictMode?' dict-on':''}${notesMode?' notes-on':''}${bm?' bm-highlighted':''}" style="animation-delay:${Math.min(idx*0.025,0.5)}s${bm?';border-left-color:'+bm.color:''}">
       <div class="verse-arabic">${arabicHtml}</div>
       <div class="dict-bar">↑ tap any word · corpus.quran.com</div>
       <div class="vtw">
@@ -654,6 +905,11 @@ function renderVerses(verses, surahNum) {
     } else {
       html += `<div class="vtrans">${escHtml(display)}${isEdited?'<span class="cbadge">edited</span>':''}</div>`;
     }
+
+    // Bookmark button
+    html += `<button class="bm-btn${bm?' bookmarked':''}" data-key="${v.key}" data-surah="${surahNum}" data-verse="${v.number}" title="${bm ? 'Edit bookmark' : 'Bookmark this verse'}">
+      <svg viewBox="0 0 24 24" fill="${bmFill}" stroke="${bmColor}" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+    </button>`;
 
     html += `</div>`;
 
@@ -707,7 +963,16 @@ function renderVerses(verses, surahNum) {
     });
   }
 
-  // ── Commentary toggles
+  // ── Bookmark button listeners
+  content.querySelectorAll('.bm-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.key;
+      const surahNum = Number(btn.dataset.surah);
+      const verseNum = Number(btn.dataset.verse);
+      const s = surahs.find(x => x.number === surahNum);
+      openBmModal(key, surahNum, verseNum, s ? s.englishName : '');
+    });
+  });
   if (notesMode) {
     // Surah-level note toggle
     const surahNoteToggle = content.querySelector('.surah-note-toggle');
@@ -805,6 +1070,7 @@ document.getElementById('overlay').addEventListener('click', () => {
 });
 
 loadSaved();
+initBmModal();
 fetchSurahs();
 </script>
 </body>
