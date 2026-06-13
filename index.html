@@ -431,19 +431,16 @@
   #welcome ul { list-style: none; margin-top: 20px; display: inline-flex; flex-direction: column; gap: 5px; text-align: left; font-size: 0.85rem; opacity: 0.55; }
   #welcome ul li::before { content: '→ '; color: var(--gold); }
 
-  /* SAVE BAR */
-  #save-bar {
-    position: fixed; bottom: 0; left: 270px; right: 0;
-    background: var(--teal); color: white; padding: 9px 36px;
-    display: flex; align-items: center; justify-content: space-between;
-    font-size: 0.82rem; letter-spacing: 0.05em;
-    transform: translateY(100%); transition: transform 0.25s ease; z-index: 90;
+  /* AUTOSAVE INDICATOR */
+  #autosave-ind {
+    position: fixed; bottom: 16px; right: 20px; z-index: 90;
+    font-family: 'Crimson Pro', serif; font-size: 0.78rem; letter-spacing: 0.07em;
+    padding: 5px 12px; border-radius: 20px;
+    opacity: 0; transition: opacity 0.3s;
+    pointer-events: none;
   }
-  #save-bar.visible { transform: translateY(0); }
-  #save-bar button { background: white; color: var(--teal); border: none; border-radius: 3px; padding: 4px 14px; cursor: pointer; font-family: 'Crimson Pro', serif; font-size: 0.82rem; font-weight: 600; }
-  #save-bar button:hover { opacity: 0.85; }
-  .saved-flash { opacity: 0; font-size: 0.75rem; letter-spacing: 0.07em; transition: opacity 0.3s; }
-  .saved-flash.show { opacity: 1; }
+  #autosave-ind.saving { opacity: 1; background: rgba(26,18,8,0.75); color: var(--gold-light); }
+  #autosave-ind.saved  { opacity: 1; background: rgba(26,92,90,0.85); color: white; }
 
   /* MOBILE */
   #menu-btn { display: none; position: fixed; top: 12px; left: 12px; z-index: 200; background: var(--ink); color: var(--gold-light); border: none; border-radius: 4px; cursor: pointer; padding: 7px 10px; font-size: 1.1rem; }
@@ -554,13 +551,7 @@
   </div>
 </div>
 
-<div id="save-bar">
-  <span>Unsaved edits</span>
-  <div style="display:flex;align-items:center;gap:14px">
-    <span class="saved-flash" id="saved-flash">✓ Saved</span>
-    <button id="save-btn">Save All</button>
-  </div>
-</div>
+<div id="autosave-ind"></div>
 
 <script>
 // ── STORAGE KEYS ─────────────────────────────────────────
@@ -575,15 +566,12 @@ let currentSurah = null;
 let editMode  = false;
 let dictMode  = false;
 let notesMode = false;
-let pendingTrans = {};   // { "2:3": "text" }
-let pendingNames = {};   // { 2: "name" }
-let pendingNotes = {};   // { "2:3": "my note" }
 let savedTrans = {};
 let savedNames = {};
 let savedNotes = {};
-let savedBookmarks = {}; // { "2:3": { label:"", color:"#b8860b", surahName:"Al-Baqarah", verseNum:3, surahNum:2 } }
+let savedBookmarks = {};
 let allVerses  = [];
-let tafsirCache = {};    // { surahNum: [ {number, text} ] }
+let tafsirCache = {};
 
 // ── INIT ─────────────────────────────────────────────────
 function loadSaved() {
@@ -593,27 +581,39 @@ function loadSaved() {
   try { savedBookmarks = JSON.parse(localStorage.getItem(SK_BOOKMARKS) || '{}'); } catch { savedBookmarks = {}; }
 }
 
+// ── AUTO-SAVE ─────────────────────────────────────────────
+let autoSaveTimer = null;
+
+function autoSave(key, type) {
+  // Write immediately to the live saved objects
+  if (type === 'trans') localStorage.setItem(SK_TRANS, JSON.stringify(savedTrans));
+  if (type === 'names') localStorage.setItem(SK_NAMES, JSON.stringify(savedNames));
+  if (type === 'notes') localStorage.setItem(SK_NOTES, JSON.stringify(savedNotes));
+  showAutoSaveIndicator();
+}
+
+function showAutoSaveIndicator() {
+  clearTimeout(autoSaveTimer);
+  const ind = document.getElementById('autosave-ind');
+  ind.classList.add('saving');
+  ind.textContent = '● Saving…';
+  autoSaveTimer = setTimeout(() => {
+    ind.classList.remove('saving');
+    ind.classList.add('saved');
+    ind.textContent = '✓ Saved';
+    setTimeout(() => { ind.classList.remove('saved'); ind.textContent = ''; }, 2000);
+  }, 600);
+}
+
+// Keep saveAll for bookmarks (they save instantly anyway) — simplify it
 function saveAll() {
-  Object.assign(savedTrans,  pendingTrans);
-  Object.assign(savedNames,  pendingNames);
-  Object.assign(savedNotes,  pendingNotes);
-  localStorage.setItem(SK_TRANS,  JSON.stringify(savedTrans));
-  localStorage.setItem(SK_NAMES,  JSON.stringify(savedNames));
-  localStorage.setItem(SK_NOTES,  JSON.stringify(savedNotes));
-  pendingTrans = {}; pendingNames = {}; pendingNotes = {};
-  updateSaveBar();
-  reRenderSidebar();
-  const f = document.getElementById('saved-flash');
-  f.classList.add('show');
-  setTimeout(() => f.classList.remove('show'), 2000);
+  localStorage.setItem(SK_TRANS, JSON.stringify(savedTrans));
+  localStorage.setItem(SK_NAMES, JSON.stringify(savedNames));
+  localStorage.setItem(SK_NOTES, JSON.stringify(savedNotes));
+  showAutoSaveIndicator();
 }
 
-function updateSaveBar() {
-  const has = Object.keys(pendingTrans).length + Object.keys(pendingNames).length + Object.keys(pendingNotes).length > 0;
-  document.getElementById('save-bar').classList.toggle('visible', has);
-}
 
-document.getElementById('save-btn').addEventListener('click', saveAll);
 
 // ── BUTTON TOGGLES ───────────────────────────────────────
 document.getElementById('btn-edit').addEventListener('click', () => {
@@ -1079,7 +1079,7 @@ function renderVerses(verses, surahNum) {
   const s = surahs.find(x => x.number === surahNum);
   const content = document.getElementById('content');
 
-  const customName = pendingNames[surahNum] ?? savedNames[surahNum] ?? null;
+  const customName = savedNames[surahNum] ?? null;
   const displayMeaning = customName !== null ? customName : s.englishNameTranslation;
   const nameEdited = customName !== null;
 
@@ -1105,7 +1105,7 @@ function renderVerses(verses, surahNum) {
   // ── Surah-level notes (shown when notesMode is on)
   if (notesMode) {
     const surahNoteKey = `surah:${surahNum}`;
-    const surahNote = pendingNotes[surahNoteKey] !== undefined ? pendingNotes[surahNoteKey] : (savedNotes[surahNoteKey] || '');
+    const surahNote = savedNotes[surahNoteKey] || '';
     const hasSurahNote = surahNote.length > 0;
     html += `<div class="surah-note-wrap notes-on">
       <button class="commentary-toggle surah-note-toggle" data-snkey="${surahNoteKey}">
@@ -1124,10 +1124,8 @@ function renderVerses(verses, surahNum) {
 
   // ── Verses
   verses.forEach((v, idx) => {
-    const stored  = savedTrans[v.key];
-    const pending = pendingTrans[v.key];
-    const display = pending !== undefined ? pending : (stored !== undefined ? stored : v.translation);
-    const isEdited = stored !== undefined || pending !== undefined;
+    const display = savedTrans[v.key] !== undefined ? savedTrans[v.key] : v.translation;
+    const isEdited = savedTrans[v.key] !== undefined;
 
     // tafsir for this verse
     let tafsirText = '';
@@ -1168,7 +1166,7 @@ function renderVerses(verses, surahNum) {
     if (notesMode) {
       const hasNote = tafsirText.length > 0;
       const noteKey = v.key;
-      const myNote = pendingNotes[noteKey] !== undefined ? pendingNotes[noteKey] : (savedNotes[noteKey] || '');
+      const myNote = savedNotes[noteKey] || '';
       const hasMyNote = myNote.length > 0;
 
       html += `<button class="commentary-toggle" data-idx="${idx}">▸ Notes${hasMyNote ? ' <span class="has-note-badge">my note</span>' : ''}</button>
@@ -1194,8 +1192,8 @@ function renderVerses(verses, surahNum) {
   if (sni) {
     sni.addEventListener('input', () => {
       const val = sni.value, orig = sni.dataset.orig, snum = Number(sni.dataset.snum);
-      if (val === orig) delete pendingNames[snum]; else pendingNames[snum] = val;
-      updateSaveBar();
+      if (val === orig) delete savedNames[snum]; else savedNames[snum] = val;
+      autoSave(snum, 'names');
       const sideEl = document.querySelector(`#surah-list button[data-num="${snum}"] .s-meaning`);
       if (sideEl) { sideEl.textContent = val || orig; sideEl.classList.toggle('edited', val !== orig && val !== ''); }
     });
@@ -1208,8 +1206,8 @@ function renderVerses(verses, surahNum) {
       ta.addEventListener('input', () => {
         autoH(ta);
         const key = ta.dataset.key, val = ta.value;
-        if (val === ta.dataset.orig) delete pendingTrans[key]; else pendingTrans[key] = val;
-        updateSaveBar();
+        if (val === ta.dataset.orig) delete savedTrans[key]; else savedTrans[key] = val;
+        autoSave(key, 'trans');
       });
     });
   }
@@ -1252,10 +1250,10 @@ function renderVerses(verses, surahNum) {
       el.addEventListener('input', () => {
         const key = el.dataset.notekey;
         const val = el.innerHTML;
-        pendingNotes[key] = val;
+        savedNotes[key] = val;
         const wrap = el.closest('.note-editor-wrap');
         if (wrap) wrap.classList.toggle('note-has-content', el.innerText.trim().length > 0);
-        updateSaveBar();
+        autoSave(key, 'notes');
       });
     });
 
