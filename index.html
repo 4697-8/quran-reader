@@ -174,12 +174,6 @@
   #bm-panel-header h2 { font-family: 'Amiri', serif; font-size: 1rem; font-weight: 400; color: var(--gold-light); }
   #bm-close-btn { background: none; border: none; color: rgba(247,243,235,0.4); cursor: pointer; font-size: 1rem; line-height: 1; padding: 2px 4px; }
   #bm-close-btn:hover { color: var(--gold-light); }
-  #bm-viewall-btn {
-    background: none; border: 1px solid rgba(184,134,11,0.35); border-radius: 3px;
-    color: var(--gold-light); cursor: pointer; font-size: 0.68rem; padding: 3px 7px;
-    font-family: 'Crimson Pro', serif; letter-spacing: 0.05em; transition: all 0.15s;
-  }
-  #bm-viewall-btn:hover { background: rgba(184,134,11,0.15); }
   #bm-list { list-style: none; padding: 8px 0 40px; overflow-y: auto; flex: 1; }
   .bm-item {
     padding: 8px 16px; border-bottom: 1px solid rgba(184,134,11,0.08);
@@ -195,81 +189,6 @@
 
   /* Verse highlighted when bookmarked */
   .verse.bm-highlighted { border-left: 3px solid var(--gold); padding-left: 10px; background: linear-gradient(to right, rgba(184,134,11,0.05), transparent); }
-
-  /* ── FULL-PAGE BOOKMARK VIEW ── */
-  #bm-fullpage {
-    position: fixed; inset: 0; z-index: 200;
-    background: var(--parchment);
-    overflow-y: auto;
-    flex-direction: column;
-  }
-  #bm-fullpage-header {
-    position: sticky; top: 0; z-index: 10;
-    background: rgba(247,243,235,0.97); backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--border);
-    padding: 14px 36px;
-    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
-  }
-  #bm-fullpage-title { display: flex; align-items: baseline; gap: 12px; }
-  #bm-fullpage-count { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); opacity: 0.5; }
-  #bm-fullpage-close {
-    background: none; border: 1px solid var(--border); border-radius: 3px;
-    padding: 5px 14px; font-family: 'Crimson Pro', serif; font-size: 0.78rem;
-    letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; color: var(--ink-soft);
-    transition: all 0.15s; white-space: nowrap;
-  }
-  #bm-fullpage-close:hover { background: var(--ink); color: var(--parchment); border-color: var(--ink); }
-  #bm-color-filters { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .cf-btn {
-    width: 20px; height: 20px; border-radius: 50%; border: 2px solid transparent;
-    cursor: pointer; transition: transform 0.15s, border-color 0.15s; flex-shrink: 0;
-  }
-  .cf-btn:hover { transform: scale(1.2); }
-  .cf-btn.active { border-color: var(--ink); transform: scale(1.15); }
-  .cf-btn.cf-all {
-    width: auto; height: auto; border-radius: 3px; padding: 2px 8px;
-    background: var(--ink-soft); color: var(--parchment); border: none;
-    font-family: 'Crimson Pro', serif; font-size: 0.7rem; letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  .cf-btn.cf-all.active { outline: 2px solid var(--gold); outline-offset: 1px; }
-  #bm-fullpage-content { padding: 32px 36px 80px; max-width: 900px; margin: 0 auto; }
-
-  /* colour group section */
-  .bm-color-group { margin-bottom: 48px; }
-  .bm-color-group-header {
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 18px; padding-bottom: 10px;
-    border-bottom: 2px solid;
-  }
-  .bm-color-group-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
-  .bm-color-group-title { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 300; letter-spacing: 0.06em; color: var(--ink); }
-  .bm-color-group-count { font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); opacity: 0.45; }
-
-  /* individual bookmark card */
-  .bm-card {
-    margin-bottom: 24px; border-radius: 6px; overflow: hidden;
-    border: 1px solid var(--border);
-    box-shadow: 0 2px 8px var(--shadow);
-    cursor: pointer; transition: box-shadow 0.2s, transform 0.15s;
-  }
-  .bm-card:hover { box-shadow: 0 4px 16px var(--shadow); transform: translateY(-1px); }
-  .bm-card-header {
-    padding: 10px 16px; display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid rgba(0,0,0,0.06);
-  }
-  .bm-card-ref { font-size: 0.7rem; letter-spacing: 0.09em; text-transform: uppercase; color: white; opacity: 0.85; }
-  .bm-card-label { font-size: 0.82rem; color: white; font-style: italic; opacity: 0.9; max-width: 60%; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .bm-card-body { padding: 16px; background: white; }
-  .bm-card-arabic {
-    font-family: 'Amiri', serif; font-size: 1.5rem; direction: rtl; text-align: right;
-    color: var(--ink); line-height: 2; margin-bottom: 10px;
-    padding-bottom: 10px; border-bottom: 1px solid rgba(184,134,11,0.15);
-  }
-  .bm-card-trans { font-size: 1rem; line-height: 1.7; color: var(--ink-soft); font-style: italic; margin-bottom: 8px; }
-  .bm-card-note { font-size: 0.88rem; line-height: 1.65; color: #2a5c8a; padding: 8px 10px; background: rgba(42,92,138,0.05); border-left: 2px solid rgba(42,92,138,0.3); border-radius: 0 3px 3px 0; margin-top: 8px; }
-  .bm-card-note-label { font-size: 0.6rem; letter-spacing: 0.09em; text-transform: uppercase; opacity: 0.55; margin-bottom: 4px; }
-  .bm-card-footer { padding: 8px 16px; background: rgba(26,18,8,0.02); border-top: 1px solid rgba(0,0,0,0.04); font-size: 0.68rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-soft); opacity: 0.4; text-align: right; }
   @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
   /* ARABIC */
@@ -478,29 +397,11 @@
   <div id="bm-panel">
     <div id="bm-panel-header">
       <h2>Bookmarks</h2>
-      <div style="display:flex;align-items:center;gap:6px">
-        <button id="bm-viewall-btn" title="View all bookmarks by colour">⊞ View All</button>
-        <button id="bm-close-btn" title="Back to surahs">✕</button>
-      </div>
+      <button id="bm-close-btn" title="Back to surahs">✕</button>
     </div>
     <ul id="bm-list"></ul>
   </div>
 </nav>
-
-<!-- Bookmark full-page view -->
-<div id="bm-fullpage" style="display:none">
-  <div id="bm-fullpage-header">
-    <div id="bm-fullpage-title">
-      <span style="font-family:'Amiri',serif;font-size:1.3rem;color:var(--gold-light)">Bookmarked Verses</span>
-      <span id="bm-fullpage-count"></span>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <div id="bm-color-filters"></div>
-      <button id="bm-fullpage-close">✕ Close</button>
-    </div>
-  </div>
-  <div id="bm-fullpage-content"></div>
-</div>
 
 <!-- Bookmark modal -->
 <div id="bm-modal-overlay">
@@ -771,161 +672,9 @@ function renderBmList() {
 }
 
 function scrollToVerse(key) {
+  // key is "surahNum:verseNum"
   const el = document.querySelector(`.bm-btn[data-key="${key}"]`);
   if (el) el.closest('.verse').scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
-// ── FULL-PAGE BOOKMARK VIEW ──────────────────────────────
-let fpActiveColor = 'all'; // 'all' or a hex color
-const verseCache = {}; // { "surahNum": { ayahs:[], enAyahs:[] } }
-
-document.getElementById('bm-viewall-btn').addEventListener('click', openFullPage);
-document.getElementById('bm-fullpage-close').addEventListener('click', closeFullPage);
-
-function openFullPage() {
-  showBmPanel(false);
-  document.getElementById('bm-fullpage').style.display = 'flex';
-  document.getElementById('bm-fullpage').style.flexDirection = 'column';
-  fpActiveColor = 'all';
-  buildColorFilters();
-  renderFullPage();
-}
-
-function closeFullPage() {
-  document.getElementById('bm-fullpage').style.display = 'none';
-}
-
-function buildColorFilters() {
-  const entries = Object.values(savedBookmarks);
-  const usedColors = [...new Set(entries.map(b => b.color))];
-  const container = document.getElementById('bm-color-filters');
-  container.innerHTML = '';
-
-  // All button
-  const all = document.createElement('button');
-  all.className = 'cf-btn cf-all' + (fpActiveColor === 'all' ? ' active' : '');
-  all.textContent = 'All';
-  all.addEventListener('click', () => { fpActiveColor = 'all'; updateFilters(); renderFullPage(); });
-  container.appendChild(all);
-
-  usedColors.forEach(c => {
-    const btn = document.createElement('button');
-    btn.className = 'cf-btn' + (fpActiveColor === c ? ' active' : '');
-    btn.style.background = c;
-    btn.title = c;
-    btn.addEventListener('click', () => { fpActiveColor = c; updateFilters(); renderFullPage(); });
-    container.appendChild(btn);
-  });
-}
-
-function updateFilters() {
-  document.querySelectorAll('.cf-btn').forEach(b => {
-    if (b.classList.contains('cf-all')) b.classList.toggle('active', fpActiveColor === 'all');
-    else b.classList.toggle('active', b.title === fpActiveColor);
-  });
-}
-
-async function renderFullPage() {
-  const content = document.getElementById('bm-fullpage-content');
-  content.innerHTML = '<div style="text-align:center;padding:40px;opacity:.4;font-size:.9rem;font-style:italic">Loading verses…</div>';
-
-  const entries = Object.entries(savedBookmarks);
-  const filtered = fpActiveColor === 'all' ? entries : entries.filter(([,b]) => b.color === fpActiveColor);
-
-  if (!filtered.length) {
-    content.innerHTML = '<div style="text-align:center;padding:60px;opacity:.4;font-size:.95rem;font-style:italic">No bookmarks for this colour.</div>';
-    document.getElementById('bm-fullpage-count').textContent = '0 verses';
-    return;
-  }
-
-  document.getElementById('bm-fullpage-count').textContent = `${filtered.length} verse${filtered.length !== 1 ? 's' : ''}`;
-
-  // Fetch any missing surah data
-  const surahsNeeded = [...new Set(filtered.map(([,b]) => b.surahNum))];
-  await Promise.all(surahsNeeded.map(async sNum => {
-    if (!verseCache[sNum]) {
-      try {
-        const [arRes, enRes] = await Promise.all([
-          fetch(`https://api.alquran.cloud/v1/surah/${sNum}`),
-          fetch(`https://api.alquran.cloud/v1/surah/${sNum}/en.asad`)
-        ]);
-        const arAyahs = (await arRes.json()).data.ayahs;
-        const enAyahs = (await enRes.json()).data.ayahs;
-        verseCache[sNum] = { arAyahs, enAyahs };
-      } catch { verseCache[sNum] = { arAyahs: [], enAyahs: [] }; }
-    }
-  }));
-
-  // Group by colour, preserving BM_COLORS order
-  const groups = {};
-  BM_COLORS.forEach(c => { groups[c] = []; });
-  filtered.forEach(([key, bm]) => {
-    if (!groups[bm.color]) groups[bm.color] = [];
-    groups[bm.color].push([key, bm]);
-  });
-
-  // Color labels
-  const COLOR_NAMES = {
-    '#b8860b': 'Gold', '#1a5c5a': 'Teal', '#8b3a1a': 'Rust',
-    '#2a5c8a': 'Blue', '#5a3a8a': 'Purple', '#2a7a3a': 'Green',
-    '#c0392b': 'Red', '#555': 'Grey'
-  };
-
-  let html = '';
-  BM_COLORS.forEach(color => {
-    const group = groups[color];
-    if (!group || !group.length) return;
-
-    const colorName = COLOR_NAMES[color] || color;
-    html += `<div class="bm-color-group" data-color="${color}">
-      <div class="bm-color-group-header" style="border-color:${color}">
-        <div class="bm-color-group-dot" style="background:${color}"></div>
-        <span class="bm-color-group-title">${colorName}</span>
-        <span class="bm-color-group-count">${group.length} verse${group.length !== 1 ? 's' : ''}</span>
-      </div>`;
-
-    group.sort((a,b) => (a[1].surahNum - b[1].surahNum) || (a[1].verseNum - b[1].verseNum)).forEach(([key, bm]) => {
-      const cache = verseCache[bm.surahNum] || {};
-      const arAyah = (cache.arAyahs || []).find(a => a.numberInSurah === bm.verseNum);
-      const enAyah = (cache.enAyahs || []).find(a => a.numberInSurah === bm.verseNum);
-      const arabic = arAyah ? arAyah.text : '—';
-      // Use custom translation if saved, else API
-      const translation = savedTrans[key] || (enAyah ? enAyah.text : '—');
-      const myNote = savedNotes[key] || '';
-      const surahNote = savedNotes[`surah:${bm.surahNum}`] || '';
-
-      html += `<div class="bm-card" data-key="${key}" data-surah="${bm.surahNum}">
-        <div class="bm-card-header" style="background:${color}">
-          <span class="bm-card-ref">${bm.surahName} · ${bm.surahNum}:${bm.verseNum}</span>
-          <span class="bm-card-label">${escHtml(bm.label || '')}</span>
-        </div>
-        <div class="bm-card-body">
-          <div class="bm-card-arabic">${arabic}</div>
-          <div class="bm-card-trans">${escHtml(translation)}</div>
-          ${myNote ? `<div class="bm-card-note"><div class="bm-card-note-label">My Notes</div>${myNote}</div>` : ''}
-        </div>
-        <div class="bm-card-footer">Click to navigate → ${bm.surahName} ${bm.surahNum}:${bm.verseNum}</div>
-      </div>`;
-    });
-
-    html += `</div>`;
-  });
-
-  content.innerHTML = html;
-
-  // Click card to navigate
-  content.querySelectorAll('.bm-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const key = card.dataset.key;
-      const surahNum = Number(card.dataset.surah);
-      closeFullPage();
-      if (surahNum !== currentSurah) {
-        loadSurah(surahNum).then(() => setTimeout(() => scrollToVerse(key), 300));
-      } else {
-        scrollToVerse(key);
-      }
-    });
-  });
 }
 
 // ── FETCH SURAHS ─────────────────────────────────────────
