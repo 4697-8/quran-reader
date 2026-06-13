@@ -845,13 +845,11 @@ async function renderFullPage() {
   await Promise.all(surahsNeeded.map(async sNum => {
     if (!verseCache[sNum]) {
       try {
-        const [arRes, enRes] = await Promise.all([
-          fetch(`https://api.alquran.cloud/v1/surah/${sNum}`),
-          fetch(`https://api.alquran.cloud/v1/surah/${sNum}/en.asad`)
+        const [arData, enData] = await Promise.all([
+          apiFetch(`/surah/${sNum}`),
+          apiFetch(`/surah/${sNum}/en.asad`)
         ]);
-        const arAyahs = (await arRes.json()).data.ayahs;
-        const enAyahs = (await enRes.json()).data.ayahs;
-        verseCache[sNum] = { arAyahs, enAyahs };
+        verseCache[sNum] = { arAyahs: arData.data.ayahs, enAyahs: enData.data.ayahs };
       } catch { verseCache[sNum] = { arAyahs: [], enAyahs: [] }; }
     }
   }));
@@ -929,14 +927,43 @@ async function renderFullPage() {
 }
 
 // ── FETCH SURAHS ─────────────────────────────────────────
-async function fetchSurahs() {
+const APIS = [
+  'https://api.alquran.cloud/v1',
+  'https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1'
+];
+let activeApi = APIS[0];
+
+async function apiFetch(path, attempt = 0) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 8000); // 8s timeout
   try {
-    const r = await fetch('https://api.alquran.cloud/v1/surah');
-    surahs = (await r.json()).data;
+    const r = await fetch(`${APIS[0]}${path}`, { signal: controller.signal });
+    clearTimeout(timer);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return await r.json();
+  } catch (e) {
+    clearTimeout(timer);
+    if (attempt < 2) {
+      await new Promise(res => setTimeout(res, 1000 * (attempt + 1)));
+      return apiFetch(path, attempt + 1);
+    }
+    throw e;
+  }
+}
+
+async function fetchSurahs() {
+  const ul = document.getElementById('surah-list');
+  ul.innerHTML = '<li style="padding:20px;opacity:.4;font-size:.85rem">Loading…</li>';
+  try {
+    const d = await apiFetch('/surah');
+    surahs = d.data;
     reRenderSidebar();
   } catch {
-    document.getElementById('surah-list').innerHTML =
-      '<li style="padding:20px;color:#c55;font-size:.82rem">Failed to load. Check connection.</li>';
+    ul.innerHTML = `<li style="padding:20px;font-size:.82rem;line-height:1.6">
+      <span style="color:#c77">Failed to load surahs.</span><br>
+      <span style="opacity:.5;font-size:.75rem">Check your internet connection,<br>then try again.</span><br><br>
+      <button onclick="fetchSurahs()" style="background:rgba(184,134,11,0.2);border:1px solid rgba(184,134,11,0.4);color:var(--gold-light);border-radius:3px;padding:4px 12px;cursor:pointer;font-family:'Crimson Pro',serif;font-size:.82rem">↺ Retry</button>
+    </li>`;
   }
 }
 
@@ -991,14 +1018,14 @@ async function loadSurah(num) {
 
   try {
     const reqs = [
-      fetch(`https://api.alquran.cloud/v1/surah/${num}`),
-      fetch(`https://api.alquran.cloud/v1/surah/${num}/en.asad`)
+      apiFetch(`/surah/${num}`),
+      apiFetch(`/surah/${num}/en.asad`)
     ];
     if (notesMode && !tafsirCache[num]) reqs.push(loadTafsir(num));
 
-    const [arRes, enRes] = await Promise.all(reqs);
-    const arAyahs = (await arRes.json()).data.ayahs;
-    const enAyahs = (await enRes.json()).data.ayahs;
+    const [arData, enData] = await Promise.all(reqs);
+    const arAyahs = arData.data.ayahs;
+    const enAyahs = enData.data.ayahs;
 
     allVerses = arAyahs.map((a, i) => ({
       number: a.numberInSurah,
@@ -1014,16 +1041,18 @@ async function loadSurah(num) {
 
     renderVerses(allVerses, num);
   } catch (e) {
-    content.innerHTML = `<div id="loader"><p style="color:#c55">Error loading surah. Please try again.</p></div>`;
+    content.innerHTML = `<div id="loader">
+      <p style="color:#c77;margin-bottom:12px">Failed to load surah. Check your connection.</p>
+      <button onclick="loadSurah(${num})" style="background:rgba(184,134,11,0.15);border:1px solid rgba(184,134,11,0.4);color:var(--gold);border-radius:3px;padding:5px 16px;cursor:pointer;font-family:'Crimson Pro',serif;font-size:.9rem">↺ Retry</button>
+    </div>`;
   }
 }
 
 // ── LOAD TAFSIR (Maududi) ────────────────────────────────
 async function loadTafsir(num) {
   try {
-    const r = await fetch(`https://api.alquran.cloud/v1/surah/${num}/en.maududi`);
-    const data = await r.json();
-    tafsirCache[num] = data.data.ayahs; // array of {numberInSurah, text}
+    const data = await apiFetch(`/surah/${num}/en.maududi`);
+    tafsirCache[num] = data.data.ayahs;
   } catch {
     tafsirCache[num] = [];
   }
