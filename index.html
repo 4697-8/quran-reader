@@ -174,6 +174,12 @@
   #bm-panel-header h2 { font-family: 'Amiri', serif; font-size: 1rem; font-weight: 400; color: var(--gold-light); }
   #bm-close-btn { background: none; border: none; color: rgba(247,243,235,0.4); cursor: pointer; font-size: 1rem; line-height: 1; padding: 2px 4px; }
   #bm-close-btn:hover { color: var(--gold-light); }
+  #bm-viewall-btn {
+    background: none; border: 1px solid rgba(184,134,11,0.35); border-radius: 3px;
+    color: var(--gold-light); cursor: pointer; font-size: 0.68rem; padding: 3px 7px;
+    font-family: 'Crimson Pro', serif; letter-spacing: 0.05em; transition: all 0.15s;
+  }
+  #bm-viewall-btn:hover { background: rgba(184,134,11,0.15); }
   #bm-list { list-style: none; padding: 8px 0 40px; overflow-y: auto; flex: 1; }
   .bm-item {
     padding: 8px 16px; border-bottom: 1px solid rgba(184,134,11,0.08);
@@ -189,6 +195,81 @@
 
   /* Verse highlighted when bookmarked */
   .verse.bm-highlighted { border-left: 3px solid var(--gold); padding-left: 10px; background: linear-gradient(to right, rgba(184,134,11,0.05), transparent); }
+
+  /* ── FULL-PAGE BOOKMARK VIEW ── */
+  #bm-fullpage {
+    position: fixed; inset: 0; z-index: 200;
+    background: var(--parchment);
+    overflow-y: auto;
+    flex-direction: column;
+  }
+  #bm-fullpage-header {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(247,243,235,0.97); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 36px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  #bm-fullpage-title { display: flex; align-items: baseline; gap: 12px; }
+  #bm-fullpage-count { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); opacity: 0.5; }
+  #bm-fullpage-close {
+    background: none; border: 1px solid var(--border); border-radius: 3px;
+    padding: 5px 14px; font-family: 'Crimson Pro', serif; font-size: 0.78rem;
+    letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; color: var(--ink-soft);
+    transition: all 0.15s; white-space: nowrap;
+  }
+  #bm-fullpage-close:hover { background: var(--ink); color: var(--parchment); border-color: var(--ink); }
+  #bm-color-filters { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .cf-btn {
+    width: 20px; height: 20px; border-radius: 50%; border: 2px solid transparent;
+    cursor: pointer; transition: transform 0.15s, border-color 0.15s; flex-shrink: 0;
+  }
+  .cf-btn:hover { transform: scale(1.2); }
+  .cf-btn.active { border-color: var(--ink); transform: scale(1.15); }
+  .cf-btn.cf-all {
+    width: auto; height: auto; border-radius: 3px; padding: 2px 8px;
+    background: var(--ink-soft); color: var(--parchment); border: none;
+    font-family: 'Crimson Pro', serif; font-size: 0.7rem; letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .cf-btn.cf-all.active { outline: 2px solid var(--gold); outline-offset: 1px; }
+  #bm-fullpage-content { padding: 32px 36px 80px; max-width: 900px; margin: 0 auto; }
+
+  /* colour group section */
+  .bm-color-group { margin-bottom: 48px; }
+  .bm-color-group-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 18px; padding-bottom: 10px;
+    border-bottom: 2px solid;
+  }
+  .bm-color-group-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .bm-color-group-title { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 300; letter-spacing: 0.06em; color: var(--ink); }
+  .bm-color-group-count { font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); opacity: 0.45; }
+
+  /* individual bookmark card */
+  .bm-card {
+    margin-bottom: 24px; border-radius: 6px; overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px var(--shadow);
+    cursor: pointer; transition: box-shadow 0.2s, transform 0.15s;
+  }
+  .bm-card:hover { box-shadow: 0 4px 16px var(--shadow); transform: translateY(-1px); }
+  .bm-card-header {
+    padding: 10px 16px; display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  .bm-card-ref { font-size: 0.7rem; letter-spacing: 0.09em; text-transform: uppercase; color: white; opacity: 0.85; }
+  .bm-card-label { font-size: 0.82rem; color: white; font-style: italic; opacity: 0.9; max-width: 60%; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bm-card-body { padding: 16px; background: white; }
+  .bm-card-arabic {
+    font-family: 'Amiri', serif; font-size: 1.5rem; direction: rtl; text-align: right;
+    color: var(--ink); line-height: 2; margin-bottom: 10px;
+    padding-bottom: 10px; border-bottom: 1px solid rgba(184,134,11,0.15);
+  }
+  .bm-card-trans { font-size: 1rem; line-height: 1.7; color: var(--ink-soft); font-style: italic; margin-bottom: 8px; }
+  .bm-card-note { font-size: 0.88rem; line-height: 1.65; color: #2a5c8a; padding: 8px 10px; background: rgba(42,92,138,0.05); border-left: 2px solid rgba(42,92,138,0.3); border-radius: 0 3px 3px 0; margin-top: 8px; }
+  .bm-card-note-label { font-size: 0.6rem; letter-spacing: 0.09em; text-transform: uppercase; opacity: 0.55; margin-bottom: 4px; }
+  .bm-card-footer { padding: 8px 16px; background: rgba(26,18,8,0.02); border-top: 1px solid rgba(0,0,0,0.04); font-size: 0.68rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-soft); opacity: 0.4; text-align: right; }
   @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
   /* ARABIC */
@@ -350,19 +431,16 @@
   #welcome ul { list-style: none; margin-top: 20px; display: inline-flex; flex-direction: column; gap: 5px; text-align: left; font-size: 0.85rem; opacity: 0.55; }
   #welcome ul li::before { content: '→ '; color: var(--gold); }
 
-  /* SAVE BAR */
-  #save-bar {
-    position: fixed; bottom: 0; left: 270px; right: 0;
-    background: var(--teal); color: white; padding: 9px 36px;
-    display: flex; align-items: center; justify-content: space-between;
-    font-size: 0.82rem; letter-spacing: 0.05em;
-    transform: translateY(100%); transition: transform 0.25s ease; z-index: 90;
+  /* AUTOSAVE INDICATOR */
+  #autosave-ind {
+    position: fixed; bottom: 16px; right: 20px; z-index: 90;
+    font-family: 'Crimson Pro', serif; font-size: 0.78rem; letter-spacing: 0.07em;
+    padding: 5px 12px; border-radius: 20px;
+    opacity: 0; transition: opacity 0.3s;
+    pointer-events: none;
   }
-  #save-bar.visible { transform: translateY(0); }
-  #save-bar button { background: white; color: var(--teal); border: none; border-radius: 3px; padding: 4px 14px; cursor: pointer; font-family: 'Crimson Pro', serif; font-size: 0.82rem; font-weight: 600; }
-  #save-bar button:hover { opacity: 0.85; }
-  .saved-flash { opacity: 0; font-size: 0.75rem; letter-spacing: 0.07em; transition: opacity 0.3s; }
-  .saved-flash.show { opacity: 1; }
+  #autosave-ind.saving { opacity: 1; background: rgba(26,18,8,0.75); color: var(--gold-light); }
+  #autosave-ind.saved  { opacity: 1; background: rgba(26,92,90,0.85); color: white; }
 
   /* MOBILE */
   #menu-btn { display: none; position: fixed; top: 12px; left: 12px; z-index: 200; background: var(--ink); color: var(--gold-light); border: none; border-radius: 4px; cursor: pointer; padding: 7px 10px; font-size: 1.1rem; }
@@ -397,11 +475,29 @@
   <div id="bm-panel">
     <div id="bm-panel-header">
       <h2>Bookmarks</h2>
-      <button id="bm-close-btn" title="Back to surahs">✕</button>
+      <div style="display:flex;align-items:center;gap:6px">
+        <button id="bm-viewall-btn" title="View all bookmarks by colour">⊞ View All</button>
+        <button id="bm-close-btn" title="Back to surahs">✕</button>
+      </div>
     </div>
     <ul id="bm-list"></ul>
   </div>
 </nav>
+
+<!-- Bookmark full-page view -->
+<div id="bm-fullpage" style="display:none">
+  <div id="bm-fullpage-header">
+    <div id="bm-fullpage-title">
+      <span style="font-family:'Amiri',serif;font-size:1.3rem;color:var(--gold-light)">Bookmarked Verses</span>
+      <span id="bm-fullpage-count"></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div id="bm-color-filters"></div>
+      <button id="bm-fullpage-close">✕ Close</button>
+    </div>
+  </div>
+  <div id="bm-fullpage-content"></div>
+</div>
 
 <!-- Bookmark modal -->
 <div id="bm-modal-overlay">
@@ -455,13 +551,7 @@
   </div>
 </div>
 
-<div id="save-bar">
-  <span>Unsaved edits</span>
-  <div style="display:flex;align-items:center;gap:14px">
-    <span class="saved-flash" id="saved-flash">✓ Saved</span>
-    <button id="save-btn">Save All</button>
-  </div>
-</div>
+<div id="autosave-ind"></div>
 
 <script>
 // ── STORAGE KEYS ─────────────────────────────────────────
@@ -476,15 +566,12 @@ let currentSurah = null;
 let editMode  = false;
 let dictMode  = false;
 let notesMode = false;
-let pendingTrans = {};   // { "2:3": "text" }
-let pendingNames = {};   // { 2: "name" }
-let pendingNotes = {};   // { "2:3": "my note" }
 let savedTrans = {};
 let savedNames = {};
 let savedNotes = {};
-let savedBookmarks = {}; // { "2:3": { label:"", color:"#b8860b", surahName:"Al-Baqarah", verseNum:3, surahNum:2 } }
+let savedBookmarks = {};
 let allVerses  = [];
-let tafsirCache = {};    // { surahNum: [ {number, text} ] }
+let tafsirCache = {};
 
 // ── INIT ─────────────────────────────────────────────────
 function loadSaved() {
@@ -494,27 +581,39 @@ function loadSaved() {
   try { savedBookmarks = JSON.parse(localStorage.getItem(SK_BOOKMARKS) || '{}'); } catch { savedBookmarks = {}; }
 }
 
+// ── AUTO-SAVE ─────────────────────────────────────────────
+let autoSaveTimer = null;
+
+function autoSave(key, type) {
+  // Write immediately to the live saved objects
+  if (type === 'trans') localStorage.setItem(SK_TRANS, JSON.stringify(savedTrans));
+  if (type === 'names') localStorage.setItem(SK_NAMES, JSON.stringify(savedNames));
+  if (type === 'notes') localStorage.setItem(SK_NOTES, JSON.stringify(savedNotes));
+  showAutoSaveIndicator();
+}
+
+function showAutoSaveIndicator() {
+  clearTimeout(autoSaveTimer);
+  const ind = document.getElementById('autosave-ind');
+  ind.classList.add('saving');
+  ind.textContent = '● Saving…';
+  autoSaveTimer = setTimeout(() => {
+    ind.classList.remove('saving');
+    ind.classList.add('saved');
+    ind.textContent = '✓ Saved';
+    setTimeout(() => { ind.classList.remove('saved'); ind.textContent = ''; }, 2000);
+  }, 600);
+}
+
+// Keep saveAll for bookmarks (they save instantly anyway) — simplify it
 function saveAll() {
-  Object.assign(savedTrans,  pendingTrans);
-  Object.assign(savedNames,  pendingNames);
-  Object.assign(savedNotes,  pendingNotes);
-  localStorage.setItem(SK_TRANS,  JSON.stringify(savedTrans));
-  localStorage.setItem(SK_NAMES,  JSON.stringify(savedNames));
-  localStorage.setItem(SK_NOTES,  JSON.stringify(savedNotes));
-  pendingTrans = {}; pendingNames = {}; pendingNotes = {};
-  updateSaveBar();
-  reRenderSidebar();
-  const f = document.getElementById('saved-flash');
-  f.classList.add('show');
-  setTimeout(() => f.classList.remove('show'), 2000);
+  localStorage.setItem(SK_TRANS, JSON.stringify(savedTrans));
+  localStorage.setItem(SK_NAMES, JSON.stringify(savedNames));
+  localStorage.setItem(SK_NOTES, JSON.stringify(savedNotes));
+  showAutoSaveIndicator();
 }
 
-function updateSaveBar() {
-  const has = Object.keys(pendingTrans).length + Object.keys(pendingNames).length + Object.keys(pendingNotes).length > 0;
-  document.getElementById('save-bar').classList.toggle('visible', has);
-}
 
-document.getElementById('save-btn').addEventListener('click', saveAll);
 
 // ── BUTTON TOGGLES ───────────────────────────────────────
 document.getElementById('btn-edit').addEventListener('click', () => {
@@ -672,49 +771,230 @@ function renderBmList() {
 }
 
 function scrollToVerse(key) {
-  // key is "surahNum:verseNum"
   const el = document.querySelector(`.bm-btn[data-key="${key}"]`);
   if (el) el.closest('.verse').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
-// ── FETCH SURAHS ─────────────────────────────────────────
-async function fetchSurahs() {
-  try {
-    const r = await fetch('https://api.alquran.cloud/v1/surah');
-    surahs = (await r.json()).data;
-    reRenderSidebar();
-  } catch {
-    document.getElementById('surah-list').innerHTML =
-      '<li style="padding:20px;color:#c55;font-size:.82rem">Failed to load. Check connection.</li>';
+// ── FULL-PAGE BOOKMARK VIEW ──────────────────────────────
+let fpActiveColor = 'all'; // 'all' or a hex color
+const verseCache = {}; // { "surahNum": { ayahs:[], enAyahs:[] } }
+
+document.getElementById('bm-viewall-btn').addEventListener('click', openFullPage);
+document.getElementById('bm-fullpage-close').addEventListener('click', closeFullPage);
+
+function openFullPage() {
+  showBmPanel(false);
+  document.getElementById('bm-fullpage').style.display = 'flex';
+  document.getElementById('bm-fullpage').style.flexDirection = 'column';
+  fpActiveColor = 'all';
+  buildColorFilters();
+  renderFullPage();
+}
+
+function closeFullPage() {
+  document.getElementById('bm-fullpage').style.display = 'none';
+}
+
+function buildColorFilters() {
+  const entries = Object.values(savedBookmarks);
+  const usedColors = [...new Set(entries.map(b => b.color))];
+  const container = document.getElementById('bm-color-filters');
+  container.innerHTML = '';
+
+  // All button
+  const all = document.createElement('button');
+  all.className = 'cf-btn cf-all' + (fpActiveColor === 'all' ? ' active' : '');
+  all.textContent = 'All';
+  all.addEventListener('click', () => { fpActiveColor = 'all'; updateFilters(); renderFullPage(); });
+  container.appendChild(all);
+
+  usedColors.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'cf-btn' + (fpActiveColor === c ? ' active' : '');
+    btn.style.background = c;
+    btn.title = c;
+    btn.addEventListener('click', () => { fpActiveColor = c; updateFilters(); renderFullPage(); });
+    container.appendChild(btn);
+  });
+}
+
+function updateFilters() {
+  document.querySelectorAll('.cf-btn').forEach(b => {
+    if (b.classList.contains('cf-all')) b.classList.toggle('active', fpActiveColor === 'all');
+    else b.classList.toggle('active', b.title === fpActiveColor);
+  });
+}
+
+async function renderFullPage() {
+  const content = document.getElementById('bm-fullpage-content');
+  content.innerHTML = '<div style="text-align:center;padding:40px;opacity:.4;font-size:.9rem;font-style:italic">Loading verses…</div>';
+
+  const entries = Object.entries(savedBookmarks);
+  const filtered = fpActiveColor === 'all' ? entries : entries.filter(([,b]) => b.color === fpActiveColor);
+
+  if (!filtered.length) {
+    content.innerHTML = '<div style="text-align:center;padding:60px;opacity:.4;font-size:.95rem;font-style:italic">No bookmarks for this colour.</div>';
+    document.getElementById('bm-fullpage-count').textContent = '0 verses';
+    return;
   }
+
+  document.getElementById('bm-fullpage-count').textContent = `${filtered.length} verse${filtered.length !== 1 ? 's' : ''}`;
+
+  // Fetch any missing surah data
+  const surahsNeeded = [...new Set(filtered.map(([,b]) => b.surahNum))];
+  await Promise.all(surahsNeeded.map(async sNum => {
+    if (!verseCache[sNum]) {
+      try {
+        const meta = SURAHS.find(x => x.n === sNum);
+        const [arData, enData] = await Promise.all([
+          fetchWithRetry(`${RAW}/surah/surah_${sNum}.json`),
+          fetchWithRetry(`${RAW}/translation/en/en_translation_${sNum}.json`)
+        ]);
+        const arAyahs = [], enAyahs = [];
+        for (let i = 1; i <= meta.c; i++) {
+          arAyahs.push({ numberInSurah: i, text: (arData.verse[`verse_${i}`] || '').replace(/^\uFEFF/, '') });
+          enAyahs.push({ numberInSurah: i, text: enData.verse[`verse_${i}`] || '' });
+        }
+        verseCache[sNum] = { arAyahs, enAyahs };
+      } catch { verseCache[sNum] = { arAyahs: [], enAyahs: [] }; }
+    }
+  }));
+
+  // Group by colour, preserving BM_COLORS order
+  const groups = {};
+  BM_COLORS.forEach(c => { groups[c] = []; });
+  filtered.forEach(([key, bm]) => {
+    if (!groups[bm.color]) groups[bm.color] = [];
+    groups[bm.color].push([key, bm]);
+  });
+
+  // Color labels
+  const COLOR_NAMES = {
+    '#b8860b': 'Gold', '#1a5c5a': 'Teal', '#8b3a1a': 'Rust',
+    '#2a5c8a': 'Blue', '#5a3a8a': 'Purple', '#2a7a3a': 'Green',
+    '#c0392b': 'Red', '#555': 'Grey'
+  };
+
+  let html = '';
+  BM_COLORS.forEach(color => {
+    const group = groups[color];
+    if (!group || !group.length) return;
+
+    const colorName = COLOR_NAMES[color] || color;
+    html += `<div class="bm-color-group" data-color="${color}">
+      <div class="bm-color-group-header" style="border-color:${color}">
+        <div class="bm-color-group-dot" style="background:${color}"></div>
+        <span class="bm-color-group-title">${colorName}</span>
+        <span class="bm-color-group-count">${group.length} verse${group.length !== 1 ? 's' : ''}</span>
+      </div>`;
+
+    group.sort((a,b) => (a[1].surahNum - b[1].surahNum) || (a[1].verseNum - b[1].verseNum)).forEach(([key, bm]) => {
+      const cache = verseCache[bm.surahNum] || {};
+      const arAyah = (cache.arAyahs || []).find(a => a.numberInSurah === bm.verseNum);
+      const enAyah = (cache.enAyahs || []).find(a => a.numberInSurah === bm.verseNum);
+      const arabic = arAyah ? arAyah.text : '—';
+      // Use custom translation if saved, else API
+      const translation = savedTrans[key] || (enAyah ? enAyah.text : '—');
+      const myNote = savedNotes[key] || '';
+      const surahNote = savedNotes[`surah:${bm.surahNum}`] || '';
+
+      html += `<div class="bm-card" data-key="${key}" data-surah="${bm.surahNum}">
+        <div class="bm-card-header" style="background:${color}">
+          <span class="bm-card-ref">${bm.surahName} · ${bm.surahNum}:${bm.verseNum}</span>
+          <span class="bm-card-label">${escHtml(bm.label || '')}</span>
+        </div>
+        <div class="bm-card-body">
+          <div class="bm-card-arabic">${arabic}</div>
+          <div class="bm-card-trans">${escHtml(translation)}</div>
+          ${myNote ? `<div class="bm-card-note"><div class="bm-card-note-label">My Notes</div>${myNote}</div>` : ''}
+        </div>
+        <div class="bm-card-footer">Click to navigate → ${bm.surahName} ${bm.surahNum}:${bm.verseNum}</div>
+      </div>`;
+    });
+
+    html += `</div>`;
+  });
+
+  content.innerHTML = html;
+
+  // Click card to navigate
+  content.querySelectorAll('.bm-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const key = card.dataset.key;
+      const surahNum = Number(card.dataset.surah);
+      closeFullPage();
+      if (surahNum !== currentSurah) {
+        loadSurah(surahNum).then(() => setTimeout(() => scrollToVerse(key), 300));
+      } else {
+        scrollToVerse(key);
+      }
+    });
+  });
+}
+
+// ── STATIC SURAH LIST (no API needed for sidebar) ────────
+const SURAHS = [{"n":1,"e":"Al-Fatihah","m":"The Opening","c":7,"a":"الفاتحة"},{"n":2,"e":"Al-Baqarah","m":"The Cow","c":286,"a":"البقرة"},{"n":3,"e":"Ali 'Imran","m":"Family of Imran","c":200,"a":"آل عمران"},{"n":4,"e":"An-Nisa","m":"The Women","c":176,"a":"النساء"},{"n":5,"e":"Al-Ma'idah","m":"The Table Spread","c":120,"a":"المائدة"},{"n":6,"e":"Al-An'am","m":"The Cattle","c":165,"a":"الأنعام"},{"n":7,"e":"Al-A'raf","m":"The Heights","c":206,"a":"الأعراف"},{"n":8,"e":"Al-Anfal","m":"The Spoils of War","c":75,"a":"الأنفال"},{"n":9,"e":"At-Tawbah","m":"The Repentance","c":129,"a":"التوبة"},{"n":10,"e":"Yunus","m":"Jonah","c":109,"a":"يونس"},{"n":11,"e":"Hud","m":"Hud","c":123,"a":"هود"},{"n":12,"e":"Yusuf","m":"Joseph","c":111,"a":"يوسف"},{"n":13,"e":"Ar-Ra'd","m":"The Thunder","c":43,"a":"الرعد"},{"n":14,"e":"Ibrahim","m":"Abraham","c":52,"a":"إبراهيم"},{"n":15,"e":"Al-Hijr","m":"The Rocky Tract","c":99,"a":"الحجر"},{"n":16,"e":"An-Nahl","m":"The Bee","c":128,"a":"النحل"},{"n":17,"e":"Al-Isra","m":"The Night Journey","c":111,"a":"الإسراء"},{"n":18,"e":"Al-Kahf","m":"The Cave","c":110,"a":"الكهف"},{"n":19,"e":"Maryam","m":"Mary","c":98,"a":"مريم"},{"n":20,"e":"Ta-Ha","m":"Ta-Ha","c":135,"a":"طه"},{"n":21,"e":"Al-Anbya","m":"The Prophets","c":112,"a":"الأنبياء"},{"n":22,"e":"Al-Hajj","m":"The Pilgrimage","c":78,"a":"الحج"},{"n":23,"e":"Al-Mu'minun","m":"The Believers","c":118,"a":"المؤمنون"},{"n":24,"e":"An-Nur","m":"The Light","c":64,"a":"النور"},{"n":25,"e":"Al-Furqan","m":"The Criterion","c":77,"a":"الفرقان"},{"n":26,"e":"Ash-Shu'ara","m":"The Poets","c":227,"a":"الشعراء"},{"n":27,"e":"An-Naml","m":"The Ant","c":93,"a":"النمل"},{"n":28,"e":"Al-Qasas","m":"The Stories","c":88,"a":"القصص"},{"n":29,"e":"Al-Ankabut","m":"The Spider","c":69,"a":"العنكبوت"},{"n":30,"e":"Ar-Rum","m":"The Romans","c":60,"a":"الروم"},{"n":31,"e":"Luqman","m":"Luqman","c":34,"a":"لقمان"},{"n":32,"e":"As-Sajdah","m":"The Prostration","c":30,"a":"السجدة"},{"n":33,"e":"Al-Ahzab","m":"The Combined Forces","c":73,"a":"الأحزاب"},{"n":34,"e":"Saba","m":"Sheba","c":54,"a":"سبأ"},{"n":35,"e":"Fatir","m":"Originator","c":45,"a":"فاطر"},{"n":36,"e":"Ya-Sin","m":"Ya Sin","c":83,"a":"يس"},{"n":37,"e":"As-Saffat","m":"Those Who Set the Ranks","c":182,"a":"الصافات"},{"n":38,"e":"Sad","m":"The Letter Sad","c":88,"a":"ص"},{"n":39,"e":"Az-Zumar","m":"The Troops","c":75,"a":"الزمر"},{"n":40,"e":"Ghafir","m":"The Forgiver","c":85,"a":"غافر"},{"n":41,"e":"Fussilat","m":"Explained in Detail","c":54,"a":"فصلت"},{"n":42,"e":"Ash-Shura","m":"The Consultation","c":53,"a":"الشورى"},{"n":43,"e":"Az-Zukhruf","m":"The Ornaments of Gold","c":89,"a":"الزخرف"},{"n":44,"e":"Ad-Dukhan","m":"The Smoke","c":59,"a":"الدخان"},{"n":45,"e":"Al-Jathiyah","m":"The Crouching","c":37,"a":"الجاثية"},{"n":46,"e":"Al-Ahqaf","m":"The Wind-Curved Sandhills","c":35,"a":"الأحقاف"},{"n":47,"e":"Muhammad","m":"Muhammad","c":38,"a":"محمد"},{"n":48,"e":"Al-Fath","m":"The Victory","c":29,"a":"الفتح"},{"n":49,"e":"Al-Hujurat","m":"The Rooms","c":18,"a":"الحجرات"},{"n":50,"e":"Qaf","m":"The Letter Qaf","c":45,"a":"ق"},{"n":51,"e":"Adh-Dhariyat","m":"The Winnowing Winds","c":60,"a":"الذاريات"},{"n":52,"e":"At-Tur","m":"The Mount","c":49,"a":"الطور"},{"n":53,"e":"An-Najm","m":"The Star","c":62,"a":"النجم"},{"n":54,"e":"Al-Qamar","m":"The Moon","c":55,"a":"القمر"},{"n":55,"e":"Ar-Rahman","m":"The Beneficent","c":78,"a":"الرحمن"},{"n":56,"e":"Al-Waqi'ah","m":"The Inevitable","c":96,"a":"الواقعة"},{"n":57,"e":"Al-Hadid","m":"The Iron","c":29,"a":"الحديد"},{"n":58,"e":"Al-Mujadila","m":"The Pleading Woman","c":22,"a":"المجادلة"},{"n":59,"e":"Al-Hashr","m":"The Exile","c":24,"a":"الحشر"},{"n":60,"e":"Al-Mumtahanah","m":"She That is to be Examined","c":13,"a":"الممتحنة"},{"n":61,"e":"As-Saf","m":"The Ranks","c":14,"a":"الصف"},{"n":62,"e":"Al-Jumu'ah","m":"The Congregation Friday","c":11,"a":"الجمعة"},{"n":63,"e":"Al-Munafiqun","m":"The Hypocrites","c":11,"a":"المنافقون"},{"n":64,"e":"At-Taghabun","m":"The Mutual Disillusion","c":18,"a":"التغابن"},{"n":65,"e":"At-Talaq","m":"The Divorce","c":12,"a":"الطلاق"},{"n":66,"e":"At-Tahrim","m":"The Prohibition","c":12,"a":"التحريم"},{"n":67,"e":"Al-Mulk","m":"The Sovereignty","c":30,"a":"الملك"},{"n":68,"e":"Al-Qalam","m":"The Pen","c":52,"a":"القلم"},{"n":69,"e":"Al-Haqqah","m":"The Reality","c":52,"a":"الحاقة"},{"n":70,"e":"Al-Ma'arij","m":"The Ascending Stairways","c":44,"a":"المعارج"},{"n":71,"e":"Nuh","m":"Noah","c":28,"a":"نوح"},{"n":72,"e":"Al-Jinn","m":"The Jinn","c":28,"a":"الجن"},{"n":73,"e":"Al-Muzzammil","m":"The Enshrouded One","c":20,"a":"المزمل"},{"n":74,"e":"Al-Muddaththir","m":"The Cloaked One","c":56,"a":"المدثر"},{"n":75,"e":"Al-Qiyamah","m":"The Resurrection","c":40,"a":"القيامة"},{"n":76,"e":"Al-Insan","m":"The Man","c":31,"a":"الإنسان"},{"n":77,"e":"Al-Mursalat","m":"The Emissaries","c":50,"a":"المرسلات"},{"n":78,"e":"An-Naba","m":"The Tidings","c":40,"a":"النبأ"},{"n":79,"e":"An-Nazi'at","m":"Those Who Drag Forth","c":46,"a":"النازعات"},{"n":80,"e":"Abasa","m":"He Frowned","c":42,"a":"عبس"},{"n":81,"e":"At-Takwir","m":"The Overthrowing","c":29,"a":"التكوير"},{"n":82,"e":"Al-Infitar","m":"The Cleaving","c":19,"a":"الانفطار"},{"n":83,"e":"Al-Mutaffifin","m":"The Defrauding","c":36,"a":"المطففين"},{"n":84,"e":"Al-Inshiqaq","m":"The Sundering","c":25,"a":"الانشقاق"},{"n":85,"e":"Al-Buruj","m":"The Mansions of the Stars","c":22,"a":"البروج"},{"n":86,"e":"At-Tariq","m":"The Nightcommer","c":17,"a":"الطارق"},{"n":87,"e":"Al-Ala","m":"The Most High","c":19,"a":"الأعلى"},{"n":88,"e":"Al-Ghashiyah","m":"The Overwhelming","c":26,"a":"الغاشية"},{"n":89,"e":"Al-Fajr","m":"The Dawn","c":30,"a":"الفجر"},{"n":90,"e":"Al-Balad","m":"The City","c":20,"a":"البلد"},{"n":91,"e":"Ash-Shams","m":"The Sun","c":15,"a":"الشمس"},{"n":92,"e":"Al-Layl","m":"The Night","c":21,"a":"الليل"},{"n":93,"e":"Ad-Duhaa","m":"The Morning Hours","c":11,"a":"الضحى"},{"n":94,"e":"Ash-Sharh","m":"The Relief","c":8,"a":"الشرح"},{"n":95,"e":"At-Tin","m":"The Fig","c":8,"a":"التين"},{"n":96,"e":"Al-Alaq","m":"The Clot","c":19,"a":"العلق"},{"n":97,"e":"Al-Qadr","m":"The Power","c":5,"a":"القدر"},{"n":98,"e":"Al-Bayyinah","m":"The Clear Proof","c":8,"a":"البينة"},{"n":99,"e":"Az-Zalzalah","m":"The Earthquake","c":8,"a":"الزلزلة"},{"n":100,"e":"Al-Adiyat","m":"The Courser","c":11,"a":"العاديات"},{"n":101,"e":"Al-Qari'ah","m":"The Calamity","c":11,"a":"القارعة"},{"n":102,"e":"At-Takathur","m":"The Rivalry in World Increase","c":8,"a":"التكاثر"},{"n":103,"e":"Al-Asr","m":"The Declining Day","c":3,"a":"العصر"},{"n":104,"e":"Al-Humazah","m":"The Traducer","c":9,"a":"الهمزة"},{"n":105,"e":"Al-Fil","m":"The Elephant","c":5,"a":"الفيل"},{"n":106,"e":"Quraysh","m":"Quraysh","c":4,"a":"قريش"},{"n":107,"e":"Al-Ma'un","m":"The Small Kindnesses","c":7,"a":"الماعون"},{"n":108,"e":"Al-Kawthar","m":"The Abundance","c":3,"a":"الكوثر"},{"n":109,"e":"Al-Kafirun","m":"The Disbelievers","c":6,"a":"الكافرون"},{"n":110,"e":"An-Nasr","m":"The Divine Support","c":3,"a":"النصر"},{"n":111,"e":"Al-Masad","m":"The Palm Fiber","c":5,"a":"المسد"},{"n":112,"e":"Al-Ikhlas","m":"The Sincerity","c":4,"a":"الإخلاص"},{"n":113,"e":"Al-Falaq","m":"The Daybreak","c":5,"a":"الفلق"},{"n":114,"e":"An-Nas","m":"Mankind","c":6,"a":"الناس"}];
+
+// Map SURAHS into the old `surahs` format the rest of the code expects
+function surahCompat(s) {
+  return { number:s.n, englishName:s.e, englishNameTranslation:savedNames[s.n]||s.m, _origMeaning:s.m, numberOfAyahs:s.c, name:s.a };
+}
+
+// ── FETCH VERSE DATA (GitHub raw, no CORS issues) ────────
+const RAW = 'https://raw.githubusercontent.com/semarketir/quranjson/master/source';
+
+async function fetchWithRetry(url, attempts = 3) {
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), 10000);
+      const r = await fetch(url, { signal: controller.signal });
+      clearTimeout(t);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return await r.json();
+    } catch(e) {
+      if (i === attempts - 1) throw e;
+      await new Promise(res => setTimeout(res, 1000 * (i + 1)));
+    }
+  }
+}
+
+function padNum(n) { return String(n).padStart(3, '0'); }
+
+// ── INIT SURAHS (instant — no API call) ──────────────────
+function fetchSurahs() {
+  surahs = SURAHS.map(surahCompat);
+  reRenderSidebar();
 }
 
 function reRenderSidebar() {
   const q = document.getElementById('surah-search').value.toLowerCase();
-  renderSurahList(q
-    ? surahs.filter(s =>
-        s.englishName.toLowerCase().includes(q) ||
-        s.englishNameTranslation.toLowerCase().includes(q) ||
-        (savedNames[s.number]||'').toLowerCase().includes(q) ||
-        String(s.number).includes(q))
-    : surahs);
+  const list = q
+    ? SURAHS.filter(s =>
+        s.e.toLowerCase().includes(q) ||
+        s.m.toLowerCase().includes(q) ||
+        (savedNames[s.n]||'').toLowerCase().includes(q) ||
+        String(s.n).includes(q))
+    : SURAHS;
+  renderSurahList(list);
 }
 
 function renderSurahList(list) {
   const ul = document.getElementById('surah-list');
   ul.innerHTML = '';
   list.forEach(s => {
-    const custom = savedNames[s.number] || pendingNames[s.number];
-    const meaning = custom || s.englishNameTranslation;
+    const num = s.n, engName = s.e, origMeaning = s.m, arabic = s.a;
+    const custom = savedNames[num];
+    const meaning = custom || origMeaning;
     const isEdited = !!custom;
     const li = document.createElement('li');
     const btn = document.createElement('button');
-    btn.dataset.num = s.number;
-    btn.innerHTML = `<span class="s-num">${s.number}</span>
-      <span class="s-name">${s.englishName}</span>
+    btn.dataset.num = num;
+    btn.innerHTML = `<span class="s-num">${num}</span>
+      <span class="s-name">${engName}</span>
       <span class="s-meaning${isEdited?' edited':''}">${escHtml(meaning)}</span>
-      <span class="s-arabic">${s.name}</span>`;
-    btn.addEventListener('click', () => loadSurah(s.number));
+      <span class="s-arabic">${arabic}</span>`;
+    btn.addEventListener('click', () => loadSurah(num));
     li.appendChild(btn);
     ul.appendChild(li);
   });
@@ -736,43 +1016,49 @@ async function loadSurah(num) {
   document.getElementById('overlay').classList.remove('show');
 
   const content = document.getElementById('content');
-  content.innerHTML = `<div id="loader"><div class="ring"></div><p>Loading surah ${num}…</p></div>`;
+  const meta = SURAHS.find(x => x.n === num);
+  content.innerHTML = `<div id="loader"><div class="ring"></div><p>Loading ${meta.e}…</p></div>`;
 
   try {
-    const reqs = [
-      fetch(`https://api.alquran.cloud/v1/surah/${num}`),
-      fetch(`https://api.alquran.cloud/v1/surah/${num}/en.asad`)
-    ];
-    if (notesMode && !tafsirCache[num]) reqs.push(loadTafsir(num));
+    const nPad = padNum(num);
+    const [arData, enData] = await Promise.all([
+      fetchWithRetry(`${RAW}/surah/surah_${num}.json`),
+      fetchWithRetry(`${RAW}/translation/en/en_translation_${num}.json`)
+    ]);
 
-    const [arRes, enRes] = await Promise.all(reqs);
-    const arAyahs = (await arRes.json()).data.ayahs;
-    const enAyahs = (await enRes.json()).data.ayahs;
+    if (notesMode && !tafsirCache[num]) await loadTafsir(num);
 
-    allVerses = arAyahs.map((a, i) => ({
-      number: a.numberInSurah,
-      arabic: a.text,
-      translation: enAyahs[i]?.text || '',
-      key: `${num}:${a.numberInSurah}`
-    }));
+    // Build verses array from the verse objects
+    const arVerses = arData.verse;
+    const enVerses = enData.verse;
+    allVerses = [];
+    for (let i = 1; i <= meta.c; i++) {
+      const arKey = `verse_${i}`;
+      const enKey = `verse_${i}`;
+      // Strip BOM from arabic text
+      const arabic = (arVerses[arKey] || '').replace(/^\uFEFF/, '');
+      const translation = enVerses[enKey] || '';
+      allVerses.push({ number: i, arabic, translation, key: `${num}:${i}` });
+    }
 
-    const s = surahs.find(x => x.number === num);
     document.getElementById('topbar-title').innerHTML =
-      `${s.englishName} <span>${s.englishNameTranslation} &middot; ${s.numberOfAyahs} verses</span>`;
-    document.title = `${s.englishName} — Quran Reader`;
+      `${meta.e} <span>${savedNames[num] || meta.m} &middot; ${meta.c} verses</span>`;
+    document.title = `${meta.e} — Quran Reader`;
 
     renderVerses(allVerses, num);
   } catch (e) {
-    content.innerHTML = `<div id="loader"><p style="color:#c55">Error loading surah. Please try again.</p></div>`;
+    content.innerHTML = `<div id="loader">
+      <p style="color:#c77;margin-bottom:12px">Failed to load surah. Check your connection.</p>
+      <button onclick="loadSurah(${num})" style="background:rgba(184,134,11,0.15);border:1px solid rgba(184,134,11,0.4);color:var(--gold);border-radius:3px;padding:5px 16px;cursor:pointer;font-family:'Crimson Pro',serif;font-size:.9rem">↺ Retry</button>
+    </div>`;
   }
 }
 
 // ── LOAD TAFSIR (Maududi) ────────────────────────────────
 async function loadTafsir(num) {
   try {
-    const r = await fetch(`https://api.alquran.cloud/v1/surah/${num}/en.maududi`);
-    const data = await r.json();
-    tafsirCache[num] = data.data.ayahs; // array of {numberInSurah, text}
+    const data = await fetchWithRetry(`https://api.alquran.cloud/v1/surah/${num}/en.maududi`);
+    tafsirCache[num] = data.data.ayahs;
   } catch {
     tafsirCache[num] = [];
   }
@@ -828,7 +1114,7 @@ function renderVerses(verses, surahNum) {
   const s = surahs.find(x => x.number === surahNum);
   const content = document.getElementById('content');
 
-  const customName = pendingNames[surahNum] ?? savedNames[surahNum] ?? null;
+  const customName = savedNames[surahNum] ?? null;
   const displayMeaning = customName !== null ? customName : s.englishNameTranslation;
   const nameEdited = customName !== null;
 
@@ -854,7 +1140,7 @@ function renderVerses(verses, surahNum) {
   // ── Surah-level notes (shown when notesMode is on)
   if (notesMode) {
     const surahNoteKey = `surah:${surahNum}`;
-    const surahNote = pendingNotes[surahNoteKey] !== undefined ? pendingNotes[surahNoteKey] : (savedNotes[surahNoteKey] || '');
+    const surahNote = savedNotes[surahNoteKey] || '';
     const hasSurahNote = surahNote.length > 0;
     html += `<div class="surah-note-wrap notes-on">
       <button class="commentary-toggle surah-note-toggle" data-snkey="${surahNoteKey}">
@@ -873,10 +1159,8 @@ function renderVerses(verses, surahNum) {
 
   // ── Verses
   verses.forEach((v, idx) => {
-    const stored  = savedTrans[v.key];
-    const pending = pendingTrans[v.key];
-    const display = pending !== undefined ? pending : (stored !== undefined ? stored : v.translation);
-    const isEdited = stored !== undefined || pending !== undefined;
+    const display = savedTrans[v.key] !== undefined ? savedTrans[v.key] : v.translation;
+    const isEdited = savedTrans[v.key] !== undefined;
 
     // tafsir for this verse
     let tafsirText = '';
@@ -917,7 +1201,7 @@ function renderVerses(verses, surahNum) {
     if (notesMode) {
       const hasNote = tafsirText.length > 0;
       const noteKey = v.key;
-      const myNote = pendingNotes[noteKey] !== undefined ? pendingNotes[noteKey] : (savedNotes[noteKey] || '');
+      const myNote = savedNotes[noteKey] || '';
       const hasMyNote = myNote.length > 0;
 
       html += `<button class="commentary-toggle" data-idx="${idx}">▸ Notes${hasMyNote ? ' <span class="has-note-badge">my note</span>' : ''}</button>
@@ -943,8 +1227,8 @@ function renderVerses(verses, surahNum) {
   if (sni) {
     sni.addEventListener('input', () => {
       const val = sni.value, orig = sni.dataset.orig, snum = Number(sni.dataset.snum);
-      if (val === orig) delete pendingNames[snum]; else pendingNames[snum] = val;
-      updateSaveBar();
+      if (val === orig) delete savedNames[snum]; else savedNames[snum] = val;
+      autoSave(snum, 'names');
       const sideEl = document.querySelector(`#surah-list button[data-num="${snum}"] .s-meaning`);
       if (sideEl) { sideEl.textContent = val || orig; sideEl.classList.toggle('edited', val !== orig && val !== ''); }
     });
@@ -957,8 +1241,8 @@ function renderVerses(verses, surahNum) {
       ta.addEventListener('input', () => {
         autoH(ta);
         const key = ta.dataset.key, val = ta.value;
-        if (val === ta.dataset.orig) delete pendingTrans[key]; else pendingTrans[key] = val;
-        updateSaveBar();
+        if (val === ta.dataset.orig) delete savedTrans[key]; else savedTrans[key] = val;
+        autoSave(key, 'trans');
       });
     });
   }
@@ -1001,10 +1285,10 @@ function renderVerses(verses, surahNum) {
       el.addEventListener('input', () => {
         const key = el.dataset.notekey;
         const val = el.innerHTML;
-        pendingNotes[key] = val;
+        savedNotes[key] = val;
         const wrap = el.closest('.note-editor-wrap');
         if (wrap) wrap.classList.toggle('note-has-content', el.innerText.trim().length > 0);
-        updateSaveBar();
+        autoSave(key, 'notes');
       });
     });
 
